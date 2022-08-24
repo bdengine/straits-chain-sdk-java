@@ -102,6 +102,11 @@ public class NftMintTest {
 //            System.out.println("失败");
 //        }
 
+        String owner = client.nftOwnerOfExcludeZero(
+                "0x228a77cec9424b709ffb2705cae6898ec8a4e888",
+                "0x228a77cec9424b709ffb2705cae6898ec8a4e888",
+                512);
+        System.out.println(owner);
 
     }
 

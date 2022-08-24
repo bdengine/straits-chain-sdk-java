@@ -659,7 +659,7 @@ public class StraitChainClient implements
         RawTransaction rawTransaction = RawTransaction.createTransaction(nonce, gasPrice, gasLimit, param.getToAddress(), value,"0x0");
         //签名Transaction，这里要对交易做签名
         byte[] signedMessage = TransactionEncoder.signMessage(rawTransaction, credentials);
-        String hexValue = Numeric.toHexString(signedMessage);;
+        String hexValue = Numeric.toHexString(signedMessage);
         //发送交易
         return scsSendRawTransaction(hexValue);
     }
