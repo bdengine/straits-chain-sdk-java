@@ -14,6 +14,7 @@ import com.shangchain.straitchain.params.*;
 import com.shangchain.straitchain.service.*;
 import com.shangchain.straitchain.utils.StraitChainUtil;
 import lombok.Data;
+import org.bouncycastle.util.encoders.Hex;
 import org.web3j.abi.FunctionEncoder;
 import org.web3j.abi.datatypes.Address;
 import org.web3j.abi.datatypes.Function;
@@ -559,8 +560,18 @@ public class StraitChainClient implements
         if (ownerOfAddress.startsWith("0x")) {
             ownerOfAddress = ownerOfAddress.replace("0x", "");
         }
+
         BigInteger bigInteger = new BigInteger(ownerOfAddress, 16);
-        return "0x"+bigInteger.toString(16);
+        String hex = bigInteger.toString(16);
+        StringBuilder sbr = new StringBuilder(hex);
+        // 长度固定40位
+        int fillZeroNumber = 40 - hex.length();
+        if (fillZeroNumber>0){
+            for (int i = 0; i < fillZeroNumber; i++) {
+                sbr.insert(0, "0");
+            }
+        }
+        return "0x"+ sbr;
     }
 
     @Override
