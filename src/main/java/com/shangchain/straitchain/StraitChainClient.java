@@ -511,9 +511,8 @@ public class StraitChainClient implements
         String encode = FunctionEncoder.encode(function);
 
         // 合约签名
-        BigInteger gasLimit = new BigInteger("110000");
         Credentials credentials = Credentials.create(param.getPrivateKey());
-        RawTransaction rawTransaction = RawTransaction.createTransaction(nonce, gasPrice, gasLimit, contractAddress, encode);
+        RawTransaction rawTransaction = RawTransaction.createTransaction(nonce, gasPrice, defaultGasLimit, contractAddress, encode);
         byte[] signedMessage = TransactionEncoder.signMessage(rawTransaction, credentials);
         return Numeric.toHexString(signedMessage);
     }
