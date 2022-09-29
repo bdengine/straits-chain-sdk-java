@@ -70,6 +70,7 @@ public class StraitChainClient implements
      * @return 响应
      */
     protected StraitChainResponse commonRequest(String requestBody, String url){
+        System.out.println("请求地址："+url+"，请求体："+requestBody);
         HttpRequest request = HttpUtil.createPost(url).contentType(ContentType.JSON.getValue()).timeout(6000);
         HttpResponse response = request.body(requestBody).execute();
         // 状态码范围在200~299内
