@@ -137,4 +137,10 @@ public class StraitChainConstant {
 
     public static final String SCS_PANG_GU_EVIDENCE = "scs_panggu_evidence";
 
+    /**
+     * 4907合约方法
+     */
+    public static final String CONTRACT_4907_SET_USER = "setUser";
+    public static final String CONTRACT_4907_USER_OF = "userOf";
+    public static final String CONTRACT_4907_USER_EXPIRES = "userExpires";
 }

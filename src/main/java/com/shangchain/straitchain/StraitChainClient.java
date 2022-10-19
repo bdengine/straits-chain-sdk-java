@@ -9,17 +9,18 @@ import com.alibaba.fastjson.JSONObject;
 import com.alibaba.fastjson.serializer.SerializerFeature;
 import com.shangchain.straitchain.constants.StraitChainConstant;
 import com.shangchain.straitchain.dto.*;
+import com.shangchain.straitchain.enums.ContractTypeEnum;
 import com.shangchain.straitchain.exception.StraitChainException;
 import com.shangchain.straitchain.params.*;
 import com.shangchain.straitchain.service.*;
 import com.shangchain.straitchain.utils.StraitChainUtil;
 import lombok.Data;
-import org.bouncycastle.util.encoders.Hex;
 import org.web3j.abi.FunctionEncoder;
 import org.web3j.abi.datatypes.Address;
 import org.web3j.abi.datatypes.Function;
 import org.web3j.abi.datatypes.Utf8String;
 import org.web3j.abi.datatypes.generated.Uint256;
+import org.web3j.abi.datatypes.generated.Uint64;
 import org.web3j.crypto.Credentials;
 import org.web3j.crypto.RawTransaction;
 import org.web3j.crypto.TransactionEncoder;
@@ -73,15 +74,17 @@ public class StraitChainClient implements
         System.out.println("请求地址："+url+"，请求体："+requestBody);
         HttpRequest request = HttpUtil.createPost(url).contentType(ContentType.JSON.getValue()).timeout(6000);
         HttpResponse response = request.body(requestBody).execute();
+        String body = response.body();
+        System.out.println("请求结果："+body);
         // 状态码范围在200~299内
         if (response.isOk()){
-            StraitChainResponse result = JSONObject.parseObject(response.body(), StraitChainResponse.class);
+            StraitChainResponse result = JSONObject.parseObject(body, StraitChainResponse.class);
             if (result.getError()!=null){
                 throw new StraitChainException(result.getError().getMessage(),result.getError().getCode());
             }
             return result;
         }
-        throw new StraitChainException("请求失败："+response.body());
+        throw new StraitChainException("请求失败："+ body);
     }
 
 
@@ -222,6 +225,20 @@ public class StraitChainClient implements
         param.setParams(list);
         StraitChainResponse response = chainRequest(param);
         return response.getResult().toString();
+    }
+
+    @Override
+    public String scsSendRawTransaction(StraitChainSendRawTransactionParams params,String encode){
+        RawTransaction rawTransaction = RawTransaction.createTransaction(
+                params.getNonce(),
+                params.getGasPrice(),
+                params.getGasLimit(),
+                params.getContractAddress(),
+                encode);
+        Credentials credentials = Credentials.create(params.getPrivateKey());
+        byte[] signedMessage = TransactionEncoder.signMessage(rawTransaction, credentials);
+        String txValue = Numeric.toHexString(signedMessage);
+        return scsSendRawTransaction(txValue);
     }
 
     /**
@@ -403,10 +420,18 @@ public class StraitChainClient implements
 
     @Override
     public String scsDeployContract(String from,Integer count) throws StraitChainException {
+        return scsDeployContract(from,count,ContractTypeEnum.DEFAULT);
+    }
+
+    @Override
+    public String scsDeployContract(String from, Integer count, ContractTypeEnum contractTypeEnum) throws StraitChainException, NullPointerException {
         List<Object> list =new ArrayList<>();
         list.add(from);
         list.add(count);
         list.add(appId);
+        if (contractTypeEnum!=ContractTypeEnum.DEFAULT){
+            list.add(contractTypeEnum.getValue());
+        }
         StraitChainParam param = new StraitChainParam();
         param.setMethod(StraitChainConstant.SCS_DEPLOY_CONTRACT);
         param.setParams(list);
@@ -557,21 +582,7 @@ public class StraitChainClient implements
     @Override
     public String nftOwnerOfExcludeZero(String from, String contractAddress, Integer tokenId) throws StraitChainException {
         String ownerOfAddress = nftOwnerOf(from, contractAddress, tokenId);
-        if (ownerOfAddress.startsWith("0x")) {
-            ownerOfAddress = ownerOfAddress.replace("0x", "");
-        }
-
-        BigInteger bigInteger = new BigInteger(ownerOfAddress, 16);
-        String hex = bigInteger.toString(16);
-        StringBuilder sbr = new StringBuilder(hex);
-        // 长度固定40位
-        int fillZeroNumber = 40 - hex.length();
-        if (fillZeroNumber>0){
-            for (int i = 0; i < fillZeroNumber; i++) {
-                sbr.insert(0, "0");
-            }
-        }
-        return "0x"+ sbr;
+        return removeExtraZero(ownerOfAddress);
     }
 
     @Override
@@ -673,5 +684,100 @@ public class StraitChainClient implements
         String hexValue = Numeric.toHexString(signedMessage);
         //发送交易
         return scsSendRawTransaction(hexValue);
+    }
+
+
+
+    @Override
+    public String nft4907SetUser(StraitNft4907SetUserParam params) throws StraitChainException, NullPointerException {
+        Function function = new Function(
+                StraitChainConstant.CONTRACT_4907_SET_USER,
+                Arrays.asList(
+                        // tokenId
+                        new Uint256(params.getTokenId())
+                        // user
+                        ,new Address(160, params.getTo())
+                        // expires
+                        ,new Uint64(params.getExpires())
+                ),
+                Collections.emptyList());
+        String encode = FunctionEncoder.encode(function);
+        BigInteger nonce = scsGetTransactionCount(params.getFrom());
+        BigInteger gasPrice = scsGasPrice();
+        StraitChainSendRawTransactionParams rawParams = new StraitChainSendRawTransactionParams();
+        rawParams.setNonce(nonce);
+        rawParams.setGasPrice(gasPrice);
+        rawParams.setGasLimit(defaultGasLimit);
+        rawParams.setContractAddress(params.getContractAddress());
+        rawParams.setTo(params.getTo());
+        rawParams.setPrivateKey(params.getPrivateKey());
+
+        return scsSendRawTransaction(rawParams,encode);
+    }
+
+    @Override
+    public String nft4907UserOf(String from,String contractAddress, Integer tokenId) throws StraitChainException, NullPointerException {
+        Function function = new Function(
+                StraitChainConstant.CONTRACT_4907_USER_OF,
+                Collections.singletonList(new Uint256(tokenId)),
+                Collections.emptyList());
+        String encode = FunctionEncoder.encode(function);
+
+        ScsCallParam param = new ScsCallParam();
+        param.setFrom(from);
+        param.setTo(contractAddress);
+        param.setGas("0x34455");
+        param.setValue("");
+        param.setData(encode);
+        return scsCall(param, DefaultBlockParameterName.LATEST.getValue());
+    }
+
+    @Override
+    public String nft4907UserOfExcludeZero(String from, String contractAddress, Integer tokenId) throws StraitChainException, NullPointerException {
+        String ownerOfAddress = nft4907UserOf(from, contractAddress, tokenId);
+        return removeExtraZero(ownerOfAddress);
+    }
+
+    /**
+     * 地址去0
+     * version 2.2.0
+     * @param address 地址
+     * @return 去0后的地址
+     */
+    private String removeExtraZero(String address){
+        if (address.startsWith("0x")) {
+            address = address.replace("0x", "");
+        }
+
+        BigInteger bigInteger = new BigInteger(address, 16);
+        String hex = bigInteger.toString(16);
+        StringBuilder sbr = new StringBuilder(hex);
+        // 长度固定40位
+        int fillZeroNumber = 40 - hex.length();
+        if (fillZeroNumber>0){
+            for (int i = 0; i < fillZeroNumber; i++) {
+                sbr.insert(0, "0");
+            }
+        }
+        return "0x"+ sbr;
+    }
+
+    @Override
+    public Long nft4907UserExpires(String from,String contractAddress, Integer tokenId) throws StraitChainException, NullPointerException {
+        Function function = new Function(
+                StraitChainConstant.CONTRACT_4907_USER_EXPIRES,
+                Collections.singletonList(new Uint256(tokenId)),
+                Collections.emptyList());
+        String encode = FunctionEncoder.encode(function);
+
+        ScsCallParam param = new ScsCallParam();
+        param.setFrom(from);
+        param.setTo(contractAddress);
+        param.setGas("0x34455");
+        param.setValue("");
+        param.setData(encode);
+        String result = scsCall(param, DefaultBlockParameterName.LATEST.getValue());
+        result = result.replace("0x", "");
+        return Long.parseLong(result, 16);
     }
 }

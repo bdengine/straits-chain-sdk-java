@@ -4,6 +4,7 @@ import com.shangchain.straitchain.dto.BlockInfoDto;
 import com.shangchain.straitchain.dto.DigitalMintDto;
 import com.shangchain.straitchain.dto.NftMintDto;
 import com.shangchain.straitchain.dto.TransactionInfoDto;
+import com.shangchain.straitchain.enums.ContractTypeEnum;
 import com.shangchain.straitchain.exception.StraitChainException;
 import com.shangchain.straitchain.params.*;
 import org.web3j.protocol.core.DefaultBlockParameterName;
@@ -78,7 +79,7 @@ public interface IScsChain {
      * @param txValue 哈希
      */
     String scsSendRawTransaction(String txValue) throws StraitChainException,NullPointerException;
-
+    String scsSendRawTransaction(StraitChainSendRawTransactionParams params,String encode) throws StraitChainException,NullPointerException;
     /**
      * 估算消耗的gas费用
      * @param scsParam 参数
@@ -142,12 +143,23 @@ public interface IScsChain {
     String scsNftMint(StraitNftMintParam nftMintParam) throws StraitChainException,NullPointerException;
 
     /**
-     * 部署合约
+     * version 2.2.0
+     * 部署默认合约
      * @param count 准备铸造的nft个数
      * @param from 通行证地址
      * @return 交易哈希
      */
     String scsDeployContract(String from,Integer count) throws StraitChainException,NullPointerException;
+
+    /**
+     * version 2.2.0
+     * 部署合约
+     * @param count 准备铸造的nft个数
+     * @param from 通行证地址
+     * @param contractTypeEnum 合约类型
+     * @return 交易哈希
+     */
+    String scsDeployContract(String from, Integer count, ContractTypeEnum contractTypeEnum) throws StraitChainException,NullPointerException;
 
     /**
      * 根据scsDeployContract返回的交易哈希，获取合约地址
