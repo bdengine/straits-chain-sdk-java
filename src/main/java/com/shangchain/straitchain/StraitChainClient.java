@@ -455,6 +455,16 @@ public class StraitChainClient implements
         BigInteger gasPrice = scsGasPrice();
         return scsCall(scsParam,blockNumber,gasPrice);
     }
+
+    private String scsCall(String from,String contractAddress,String data){
+        ScsCallParam param = new ScsCallParam();
+        param.setFrom(from);
+        param.setTo(contractAddress);
+        param.setGas("0x34455");
+        param.setValue("");
+        param.setData(data);
+        return scsCall(param,DefaultBlockParameterName.LATEST.getValue());
+    }
     @Override
     public String scsCall(ScsCallParam scsParam, String blockNumber,BigInteger gasPrice) throws StraitChainException {
         scsParam.setGasPrice("0x"+gasPrice.toString(16));
@@ -569,13 +579,7 @@ public class StraitChainClient implements
                 Collections.emptyList());
         String encode = FunctionEncoder.encode(function);
 
-        ScsCallParam param = new ScsCallParam();
-        param.setFrom(from);
-        param.setTo(contractAddress);
-        param.setGas("0x34455");
-        param.setValue("");
-        param.setData(encode);
-        return scsCall(param, DefaultBlockParameterName.LATEST.getValue());
+        return scsCall(from, contractAddress,encode);
 
     }
 
@@ -723,13 +727,7 @@ public class StraitChainClient implements
                 Collections.emptyList());
         String encode = FunctionEncoder.encode(function);
 
-        ScsCallParam param = new ScsCallParam();
-        param.setFrom(from);
-        param.setTo(contractAddress);
-        param.setGas("0x34455");
-        param.setValue("");
-        param.setData(encode);
-        return scsCall(param, DefaultBlockParameterName.LATEST.getValue());
+        return scsCall(from, contractAddress,encode);
     }
 
     @Override
@@ -741,12 +739,15 @@ public class StraitChainClient implements
     /**
      * 地址去0
      * version 2.2.0
-     * @param address 地址
+     * @param address 地址，如果没有地址则返回null
      * @return 去0后的地址
      */
     private String removeExtraZero(String address){
         if (address.startsWith("0x")) {
             address = address.replace("0x", "");
+        }
+        if (StrUtil.isBlank(address)){
+            return null;
         }
 
         BigInteger bigInteger = new BigInteger(address, 16);
@@ -770,13 +771,7 @@ public class StraitChainClient implements
                 Collections.emptyList());
         String encode = FunctionEncoder.encode(function);
 
-        ScsCallParam param = new ScsCallParam();
-        param.setFrom(from);
-        param.setTo(contractAddress);
-        param.setGas("0x34455");
-        param.setValue("");
-        param.setData(encode);
-        String result = scsCall(param, DefaultBlockParameterName.LATEST.getValue());
+        String result = scsCall(from, contractAddress,encode);
         result = result.replace("0x", "");
         return Long.parseLong(result, 16);
     }
