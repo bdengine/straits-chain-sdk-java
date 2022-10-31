@@ -143,4 +143,17 @@ public class StraitChainConstant {
     public static final String CONTRACT_4907_SET_USER = "setUser";
     public static final String CONTRACT_4907_USER_OF = "userOf";
     public static final String CONTRACT_4907_USER_EXPIRES = "userExpires";
+
+    public static final String CONTRACT_TRANSFER_OF_OWNER_SHIP = "transferOfOwnerShip";
+    public static final String CONTRACT_SET_NFT_LOCK_TIME_FLAG = "setNftLockTimeFlag";
+    public static final String CONTRACT_GET_NFT_LOCK_TIME_FLAG = "getNftLockTimeFlag";
+    public static final String CONTRACT_SET_NFT_LOCK_COUNT_FLAG = "setNftLockCountFlag";
+    public static final String CONTRACT_GET_NFT_LOCK_COUNT_FLAG = "setNftLockCountFlag";
+    public static final String CONTRACT_SET_NFT_LOCK_TIME = "setNftLockTime";
+    public static final String CONTRACT_GET_NFT_LOCK_TIME = "getNftLockTime";
+    public static final String CONTRACT_SET_NFT_LOCK_COUNT = "setNftLockCount";
+    public static final String CONTRACT_GET_NFT_LOCK_COUNT = "getNftLockCount";
+    public static final String CONTRACT_TOKEN_URI = "tokenURI";
+    public static final String CONTRACT_TOTAL_SUPPLY = "totalSupply";
+    public static final String CONTRACT_GET_OWNER_OF_CONTRACT = "getOwnerOfContract";
 }

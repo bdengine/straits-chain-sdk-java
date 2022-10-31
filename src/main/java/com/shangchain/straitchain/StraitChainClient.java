@@ -19,6 +19,7 @@ import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.web3j.abi.FunctionEncoder;
 import org.web3j.abi.datatypes.Address;
+import org.web3j.abi.datatypes.Bool;
 import org.web3j.abi.datatypes.Function;
 import org.web3j.abi.datatypes.Utf8String;
 import org.web3j.abi.datatypes.generated.Uint256;
@@ -79,11 +80,13 @@ public class StraitChainClient implements
      * @return 响应
      */
     protected StraitChainResponse commonRequest(String requestBody, String url){
-        log.info("请求地址：{}，请求体：{}",url,requestBody);
+//        log.info("请求地址：{}，请求体：{}",url,requestBody);
+        System.out.println("请求地址："+url+"，请求体："+requestBody);
         HttpRequest request = HttpUtil.createPost(url).contentType(ContentType.JSON.getValue()).timeout(timeout);
         HttpResponse response = request.body(requestBody).execute();
         String body = response.body();
-        log.info("请求结果：{}",body);
+//        log.info("请求结果：{}",body);
+        System.out.println("请求结果："+body);
         // 状态码范围在200~299内
         if (response.isOk()){
             StraitChainResponse result = JSONObject.parseObject(body, StraitChainResponse.class);
@@ -246,6 +249,22 @@ public class StraitChainClient implements
                 params.getContractAddress(),
                 encode);
         Credentials credentials = Credentials.create(params.getPrivateKey());
+        byte[] signedMessage = TransactionEncoder.signMessage(rawTransaction, credentials);
+        String txValue = Numeric.toHexString(signedMessage);
+        return scsSendRawTransaction(txValue);
+    }
+
+    @Override
+    public String scsSendRawTransaction(String contractAddress, String fromAddress, String privateKey, String encode) throws StraitChainException, NullPointerException {
+        BigInteger nonce = this.scsGetTransactionCount(fromAddress);
+        BigInteger gasPrice = this.scsGasPrice();
+        RawTransaction rawTransaction = RawTransaction.createTransaction(
+                nonce,
+                gasPrice,
+                defaultGasLimit,
+                contractAddress,
+                encode);
+        Credentials credentials = Credentials.create(privateKey);
         byte[] signedMessage = TransactionEncoder.signMessage(rawTransaction, credentials);
         String txValue = Numeric.toHexString(signedMessage);
         return scsSendRawTransaction(txValue);
@@ -784,5 +803,134 @@ public class StraitChainClient implements
         String result = scsCall(from, contractAddress,encode);
         result = result.replace("0x", "");
         return Long.parseLong(result, 16);
+    }
+
+    @Override
+    public String nftTransferOfOwnerShip(String contractAddress,String fromAddress,String toAddress,String privateKey) throws StraitChainException, NullPointerException {
+        Function function = new Function(
+                StraitChainConstant.CONTRACT_TRANSFER_OF_OWNER_SHIP,
+                Collections.singletonList(new Address(toAddress)),
+                Collections.emptyList());
+        String encode = FunctionEncoder.encode(function);
+        return scsSendRawTransaction(contractAddress,fromAddress,privateKey, encode);
+    }
+
+    @Override
+    public Boolean nftSetLockTimeFlag(String contractAddress,String fromAddress,String privateKey, Boolean lock) throws StraitChainException, NullPointerException {
+        Function function = new Function(
+                StraitChainConstant.CONTRACT_SET_NFT_LOCK_TIME_FLAG,
+                Collections.singletonList(new Bool(lock)),
+                Collections.emptyList());
+        String encode = FunctionEncoder.encode(function);
+        String result = scsSendRawTransaction(contractAddress, fromAddress, privateKey, encode);
+        return Boolean.parseBoolean(result);
+    }
+
+    @Override
+    public String nftGetLockTimeFlag(String contractAddress,String fromAddress,String privateKey) throws StraitChainException, NullPointerException {
+        Function function = new Function(
+                StraitChainConstant.CONTRACT_GET_NFT_LOCK_TIME_FLAG,
+                Collections.emptyList(),
+                Collections.emptyList());
+        String encode = FunctionEncoder.encode(function);
+        return scsCall(fromAddress, contractAddress,encode);
+    }
+
+    @Override
+    public String nftSetLockCountFlag(String contractAddress,String fromAddress,String privateKey, Boolean lock) throws StraitChainException, NullPointerException {
+        Function function = new Function(
+                StraitChainConstant.CONTRACT_SET_NFT_LOCK_COUNT_FLAG,
+                Collections.singletonList(new Bool(lock)),
+                Collections.emptyList());
+        String encode = FunctionEncoder.encode(function);
+        return scsSendRawTransaction(contractAddress,fromAddress,privateKey, encode);
+    }
+
+    @Override
+    public String nftGetLockCountFlag(String contractAddress,String fromAddress,String privateKey) throws StraitChainException, NullPointerException {
+        Function function = new Function(
+                StraitChainConstant.CONTRACT_GET_NFT_LOCK_COUNT_FLAG,
+                Collections.emptyList(),
+                Collections.emptyList());
+        String encode = FunctionEncoder.encode(function);
+        return scsCall(fromAddress,contractAddress, encode);
+    }
+
+    @Override
+    public String nftSetLockTime(String contractAddress,String fromAddress,String privateKey, Long seconds) throws StraitChainException, NullPointerException {
+        Function function = new Function(
+                StraitChainConstant.CONTRACT_SET_NFT_LOCK_TIME,
+                Collections.singletonList(new Uint256(seconds)),
+                Collections.emptyList());
+        String encode = FunctionEncoder.encode(function);
+        return scsSendRawTransaction(contractAddress,fromAddress,privateKey, encode);
+    }
+
+    @Override
+    public Long nftGetLockTime(String contractAddress,String fromAddress,String privateKey) throws StraitChainException, NullPointerException {
+        Function function = new Function(
+                StraitChainConstant.CONTRACT_GET_NFT_LOCK_TIME,
+                Collections.emptyList(),
+                Collections.emptyList());
+        String encode = FunctionEncoder.encode(function);
+        String result = scsCall(fromAddress,contractAddress, encode);
+        result = result.replace("0x", "");
+        return Long.parseLong(result, 16);
+    }
+
+    @Override
+    public String nftSetLockCount(String contractAddress,String fromAddress,String privateKey, Long lockCount) throws StraitChainException, NullPointerException {
+        Function function = new Function(
+                StraitChainConstant.CONTRACT_SET_NFT_LOCK_COUNT,
+                Collections.singletonList(new Uint256(lockCount)),
+                Collections.emptyList());
+        String encode = FunctionEncoder.encode(function);
+        return scsSendRawTransaction(contractAddress, fromAddress, privateKey, encode);
+    }
+
+    @Override
+    public Long nftGetLockCount(String contractAddress,String fromAddress,String privateKey) throws StraitChainException, NullPointerException {
+        Function function = new Function(
+                StraitChainConstant.CONTRACT_GET_NFT_LOCK_COUNT,
+                Collections.emptyList(),
+                Collections.emptyList());
+        String encode = FunctionEncoder.encode(function);
+        String s = scsCall(fromAddress,contractAddress, encode);
+        if (StrUtil.startWith(s, "0x")){
+            s = s.replace("0x", "");
+        }
+        return Long.parseLong(s,16);
+    }
+
+    @Override
+    public String nftTokenUri(String contractAddress,String fromAddress,Long tokenId) throws StraitChainException, NullPointerException {
+        Function function = new Function(
+                StraitChainConstant.CONTRACT_TOKEN_URI,
+                Collections.singletonList(new Uint256(tokenId)),
+                Collections.emptyList());
+        String encode = FunctionEncoder.encode(function);
+        return scsCall(fromAddress,contractAddress, encode);
+    }
+
+    @Override
+    public Long nftTotalSupply(String contractAddress,String fromAddress) throws StraitChainException, NullPointerException {
+        Function function = new Function(
+                StraitChainConstant.CONTRACT_TOTAL_SUPPLY,
+                Collections.emptyList(),
+                Collections.emptyList());
+        String encode = FunctionEncoder.encode(function);
+        String s = scsCall(fromAddress,contractAddress, encode);
+        return Long.parseLong(s);
+    }
+
+    @Override
+    public String nftGetOwnerOfContract(String contractAddress,String fromAddress) throws StraitChainException, NullPointerException {
+        Function function = new Function(
+                StraitChainConstant.CONTRACT_GET_OWNER_OF_CONTRACT,
+                Collections.emptyList(),
+                Collections.emptyList());
+        String encode = FunctionEncoder.encode(function);
+        String address = scsCall(fromAddress,contractAddress, encode);
+        return removeExtraZero(address);
     }
 }

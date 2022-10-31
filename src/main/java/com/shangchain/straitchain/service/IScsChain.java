@@ -80,6 +80,8 @@ public interface IScsChain {
      */
     String scsSendRawTransaction(String txValue) throws StraitChainException,NullPointerException;
     String scsSendRawTransaction(StraitChainSendRawTransactionParams params,String encode) throws StraitChainException,NullPointerException;
+    String scsSendRawTransaction(String contractAddress,String fromAddress,String privateKey,String encode) throws StraitChainException,NullPointerException;
+
     /**
      * 估算消耗的gas费用
      * @param scsParam 参数
