@@ -15,6 +15,8 @@ import com.shangchain.straitchain.params.*;
 import com.shangchain.straitchain.service.*;
 import com.shangchain.straitchain.utils.StraitChainUtil;
 import lombok.Data;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 import org.web3j.abi.FunctionEncoder;
 import org.web3j.abi.datatypes.Address;
 import org.web3j.abi.datatypes.Function;
@@ -44,10 +46,16 @@ public class StraitChainClient implements
         IDepositCertificateContract, Ipfs,
         IBusiness
 {
+    Logger log = LoggerFactory.getLogger(this.getClass());
+
     private String appId;
     private String appKey;
     private String url;
     private BigInteger defaultGasLimit = new BigInteger("150000");
+    /**
+     * 初始化的时候要设置
+     */
+    private int timeout = 6000;
 
     public StraitChainClient(String appId, String appKey, String url) {
         this.appId = appId;
@@ -71,11 +79,11 @@ public class StraitChainClient implements
      * @return 响应
      */
     protected StraitChainResponse commonRequest(String requestBody, String url){
-        System.out.println("请求地址："+url+"，请求体："+requestBody);
-        HttpRequest request = HttpUtil.createPost(url).contentType(ContentType.JSON.getValue()).timeout(6000);
+        log.info("请求地址：{}，请求体：{}",url,requestBody);
+        HttpRequest request = HttpUtil.createPost(url).contentType(ContentType.JSON.getValue()).timeout(timeout);
         HttpResponse response = request.body(requestBody).execute();
         String body = response.body();
-        System.out.println("请求结果："+body);
+        log.info("请求结果：{}",body);
         // 状态码范围在200~299内
         if (response.isOk()){
             StraitChainResponse result = JSONObject.parseObject(body, StraitChainResponse.class);
@@ -89,7 +97,9 @@ public class StraitChainClient implements
 
 
     protected StraitChainResponse commonFileRequest(Map<String,Object> parametersMap, String url){
-        HttpResponse response = HttpRequest.post(url).form(parametersMap).timeout(6000).execute();
+        log.info("请求地址：{}，请求体：{}",url,JSONObject.toJSONString(parametersMap));
+        HttpResponse response = HttpRequest.post(url).form(parametersMap).timeout(timeout).execute();
+        log.info("请求结果：{}",response.body());
         // 状态码范围在200~299内
         if (response.isOk()){
             StraitChainResponse result = JSONObject.parseObject(response.body(), StraitChainResponse.class);
@@ -110,7 +120,7 @@ public class StraitChainClient implements
         for (int i = 0; i < paramList.size(); i++) {
             Object obj = paramList.get(i);
             if (obj == null) {
-                throw new StraitChainException(straitChainParam.getMethod()+"，第"+i+"个参数为null，参数不允许为null！");
+                throw new StraitChainException(straitChainParam.getMethod()+"，第"+i+"个参数为null，参数不允许为null，为空则填写空串\"\"");
             }
         }
         return commonRequest(JSONObject.toJSONString(straitChainParam, SerializerFeature.DisableCircularReferenceDetect), url + chainUri);
