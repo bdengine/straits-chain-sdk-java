@@ -84,7 +84,7 @@ public interface INftContract {
      * @param contractAddress 合约地址
      * @return 交易哈希
      */
-    String nftGetLockCountFlag(String contractAddress,String fromAddress,String privateKey) throws StraitChainException,NullPointerException;
+    Boolean nftGetLockCountFlag(String contractAddress,String fromAddress,String privateKey) throws StraitChainException,NullPointerException;
 
     /**
      * 设置合约锁定转移时间

@@ -148,7 +148,7 @@ public class StraitChainConstant {
     public static final String CONTRACT_SET_NFT_LOCK_TIME_FLAG = "setNftLockTimeFlag";
     public static final String CONTRACT_GET_NFT_LOCK_TIME_FLAG = "getNftLockTimeFlag";
     public static final String CONTRACT_SET_NFT_LOCK_COUNT_FLAG = "setNftLockCountFlag";
-    public static final String CONTRACT_GET_NFT_LOCK_COUNT_FLAG = "setNftLockCountFlag";
+    public static final String CONTRACT_GET_NFT_LOCK_COUNT_FLAG = "getNftLockCountFlag";
     public static final String CONTRACT_SET_NFT_LOCK_TIME = "setNftLockTime";
     public static final String CONTRACT_GET_NFT_LOCK_TIME = "getNftLockTime";
     public static final String CONTRACT_SET_NFT_LOCK_COUNT = "setNftLockCount";

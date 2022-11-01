@@ -847,13 +847,15 @@ public class StraitChainClient implements
     }
 
     @Override
-    public String nftGetLockCountFlag(String contractAddress,String fromAddress,String privateKey) throws StraitChainException, NullPointerException {
+    public Boolean nftGetLockCountFlag(String contractAddress,String fromAddress,String privateKey) throws StraitChainException, NullPointerException {
         Function function = new Function(
                 StraitChainConstant.CONTRACT_GET_NFT_LOCK_COUNT_FLAG,
                 Collections.emptyList(),
                 Collections.emptyList());
         String encode = FunctionEncoder.encode(function);
-        return scsCall(fromAddress,contractAddress, encode);
+        String result = scsCall(fromAddress, contractAddress, encode);
+        result = result.replace("0x", "");
+        return Long.parseLong(result,16) == 1;
     }
 
     @Override
