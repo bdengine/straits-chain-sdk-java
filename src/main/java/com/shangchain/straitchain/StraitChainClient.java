@@ -596,7 +596,19 @@ public class StraitChainClient implements
         requestParametersMap.put("appId",appId);
         requestParametersMap.put("sign",signData);
 
-        StraitChainResponse result = commonFileRequest(requestParametersMap, url + "/api/develop/ipfsUpload");
+        StraitChainResponse result;
+        try {
+            result = commonFileRequest(requestParametersMap, url + "/api/develop/ipfsUpload");
+        } catch (Exception e) {
+            String message = e.getMessage();
+            if (StrUtil.contains(message, "已上传")) {
+                log.warn("文件已上传："+e.getMessage());
+                String[] s = message.split(" ");
+                return s[1];
+            }else {
+                throw e;
+            }
+        }
         return result.getResult().toString();
     }
 
