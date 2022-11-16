@@ -6,16 +6,38 @@
 
     <groupId>com.shangchain</groupId>
     <artifactId>shangchain-strait-chain-sdk</artifactId>
-    <version>1.2.2</version>
-    <name>shangchain-strait-chain-sdk</name>
+    <version>1.2.3</version>
+    <name>${project.groupId}:${project.artifactId}</name>
     <description>strait chain for java development</description>
     <url>https://github.com/bdengine/straits-chain-sdk-java</url>
+    <licenses>
+        <license>
+            <name>The Apache License, Version 2.0</name>
+            <url>http://www.apache.org/licenses/LICENSE-2.0.txt</url>
+        </license>
+    </licenses>
+    <scm>
+        <connection>https://github.com/bdengine/straits-chain-sdk-java.git</connection>
+        <url>https://github.com/bdengine/straits-chain-sdk-java</url>
+    </scm>
+    <developers>
+        <developer>
+            <name>ShangChain</name>
+            <email>service@straitschain.com</email>
+            <roles>
+                <role>Manager></role>
+            </roles>
+            <timezone>+8</timezone>
+        </developer>
+    </developers>
 
 
     <properties>
         <maven.compiler.source>8</maven.compiler.source>
         <maven.compiler.target>8</maven.compiler.target>
+        <java.version>1.8</java.version>
         <hutool>5.8.9</hutool>
+        <fastjson>2.0.18</fastjson>
     </properties>
     <dependencies>
         <dependency>
@@ -110,10 +132,22 @@
         <dependency>
             <groupId>com.alibaba</groupId>
             <artifactId>fastjson</artifactId>
-            <version>2.0.12</version>
+            <version>${fastjson}</version>
         </dependency>
     </dependencies>
 
+    <distributionManagement>
+        <snapshotRepository>
+            <id>ossrh</id>
+            <name>snapshots</name>
+            <url>https://s01.oss.sonatype.org/content/repositories/snapshots</url>
+        </snapshotRepository>
+        <repository>
+            <id>ossrh</id>
+            <name>release</name>
+            <url>https://s01.oss.sonatype.org/service/local/staging/deploy/maven2/</url>
+        </repository>
+    </distributionManagement>
     <profiles>
         <profile>
             <id>release</id>
@@ -192,28 +226,6 @@
             </build>
         </profile>
     </profiles>
-
-
-    <licenses>
-        <license>
-            <name>Apache License, Version 2.0</name>
-            <url>https://www.apache.org/licenses/LICENSE-2.0</url>
-        </license>
-    </licenses>
-    <scm>
-        <connection>https://github.com/bdengine/straits-chain-sdk-java.git</connection>
-        <url>https://github.com/bdengine/straits-chain-sdk-java</url>
-    </scm>
-    <developers>
-        <developer>
-            <name>Junisyoan</name>
-            <email>service@straitschain.com</email>
-            <roles>
-                <role>Manager></role>
-            </roles>
-            <timezone>+8</timezone>
-        </developer>
-    </developers>
 
 
 </project>
