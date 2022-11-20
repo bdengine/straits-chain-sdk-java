@@ -70,6 +70,10 @@ public class StraitChainClient implements
         this.url = url;
     }
 
+    public void setTimeout(int timeout){
+        this.timeout = timeout;
+    }
+
     public StraitChainClient() {
     }
 
