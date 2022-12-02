@@ -84,12 +84,12 @@ public class StraitChainClient implements
      * @return 响应
      */
     protected StraitChainResponse commonRequest(String requestBody, String url){
-        log.info("请求地址：{}，请求体：{}",url,requestBody);
+        log.debug("请求地址：{}，请求体：{}",url,requestBody);
 //        System.out.println("请求地址："+url+"，请求体："+requestBody);
         HttpRequest request = HttpUtil.createPost(url).contentType(ContentType.JSON.getValue()).timeout(timeout);
         HttpResponse response = request.body(requestBody).execute();
         String body = response.body();
-        log.info("请求结果：{}",body);
+        log.debug("请求结果：{}",body);
 //        System.out.println("请求结果："+body);
         // 状态码范围在200~299内
         if (response.isOk()){
