@@ -6,7 +6,7 @@
 
     <groupId>com.straitchain</groupId>
     <artifactId>shangchain-strait-chain-sdk</artifactId>
-    <version>1.2.5</version>
+    <version>1.2.6</version>
     <name>${project.groupId}:${project.artifactId}</name>
     <description>strait chain for java development</description>
     <url>https://github.com/bdengine/straits-chain-sdk-java</url>

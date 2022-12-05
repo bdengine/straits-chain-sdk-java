@@ -163,11 +163,16 @@ public class StraitChainClient implements
 
     @Override
     public BigInteger scsGetTransactionCount(String from) throws StraitChainException {
+        return scsGetTransactionCount(from,DefaultBlockParameterName.PENDING);
+    }
+
+    @Override
+    public BigInteger scsGetTransactionCount(String from, DefaultBlockParameterName blockParameterName) throws StraitChainException, NullPointerException {
         StraitChainParam param = new StraitChainParam();
         param.setMethod(StraitChainConstant.SCS_GET_TRANSACTION_COUNT);
         List<Object> list =new ArrayList<>();
         list.add(from);
-        list.add(DefaultBlockParameterName.PENDING.getValue());
+        list.add(blockParameterName.getValue());
         param.setParams(list);
         StraitChainResponse response = chainRequest(param);
         return StraitChainUtil.toBigInteger(response.getResult().toString());

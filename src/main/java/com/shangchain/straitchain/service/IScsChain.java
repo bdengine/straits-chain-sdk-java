@@ -46,6 +46,17 @@ public interface IScsChain {
     BigInteger scsGetTransactionCount(String from) throws StraitChainException,NullPointerException;
 
     /**
+     * v 1.2.6
+     * 获取nonce
+     * @param from 通行证地址
+     * @param blockParameterName 块参数，已成功或者交易池
+     * @return 获取nonce
+     * @throws StraitChainException 海峡链异常
+     * @throws NullPointerException 结果为空
+     */
+    BigInteger scsGetTransactionCount(String from,DefaultBlockParameterName blockParameterName) throws StraitChainException,NullPointerException;
+
+    /**
      * 块内的交易数量
      * @param blockHx 块哈希
      * @return 块内的交易数量
