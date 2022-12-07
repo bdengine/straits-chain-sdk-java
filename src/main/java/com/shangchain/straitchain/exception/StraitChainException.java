@@ -27,6 +27,7 @@ public class StraitChainException extends RuntimeException{
     public StraitChainException(StraitChainResponse.Error error) {
         super(error.getMessage());
         this.error = error;
+        this.code = error.getCode();
     }
 
     public StraitChainException(String message, Throwable cause) {
