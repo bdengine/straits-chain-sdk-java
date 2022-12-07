@@ -1,5 +1,7 @@
 package com.shangchain.straitchain.exception;
 
+import com.shangchain.straitchain.dto.StraitChainResponse;
+
 /**
  * 2022/4/26
  * 异常
@@ -8,6 +10,7 @@ package com.shangchain.straitchain.exception;
  */
 public class StraitChainException extends RuntimeException{
     private Integer code;
+    private StraitChainResponse.Error error;
     public StraitChainException(String message) {
         super(message);
     }
@@ -21,11 +24,24 @@ public class StraitChainException extends RuntimeException{
         this.code = code;
     }
 
+    public StraitChainException(StraitChainResponse.Error error) {
+        super(error.getMessage());
+        this.error = error;
+    }
+
     public StraitChainException(String message, Throwable cause) {
         super(message, cause);
     }
 
     public Integer getCode() {
         return code;
+    }
+
+    public StraitChainResponse.Error getError() {
+        return error;
+    }
+
+    public void setError(StraitChainResponse.Error error) {
+        this.error = error;
     }
 }
