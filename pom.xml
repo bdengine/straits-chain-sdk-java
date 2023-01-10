@@ -70,9 +70,15 @@
             </exclusions>
         </dependency>
         <dependency>
+            <groupId>org.jetbrains.kotlin</groupId>
+            <artifactId>kotlin-stdlib-jdk8</artifactId>
+            <version>1.4.32</version>
+        </dependency>
+
+        <dependency>
             <groupId>org.web3j</groupId>
             <artifactId>core</artifactId>
-            <version>5.0.0</version>
+            <version>4.9.5</version>
             <exclusions>
                 <exclusion>
                     <groupId>org.bouncycastle</groupId>

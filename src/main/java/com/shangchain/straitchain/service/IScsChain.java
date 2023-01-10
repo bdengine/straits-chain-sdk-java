@@ -1,9 +1,6 @@
 package com.shangchain.straitchain.service;
 
-import com.shangchain.straitchain.dto.BlockInfoDto;
-import com.shangchain.straitchain.dto.DigitalMintDto;
-import com.shangchain.straitchain.dto.NftMintDto;
-import com.shangchain.straitchain.dto.TransactionInfoDto;
+import com.shangchain.straitchain.dto.*;
 import com.shangchain.straitchain.enums.ContractTypeEnum;
 import com.shangchain.straitchain.exception.StraitChainException;
 import com.shangchain.straitchain.params.*;
@@ -248,4 +245,14 @@ public interface IScsChain {
      * @return 交易哈希
      */
     String scsDigitalCollectionTransaction(DigitalCollectionTransactionParam param) throws StraitChainException,NullPointerException;
+
+
+    /**
+     * 1155合约铸造
+     * @param param 参数
+     * @return
+     * @throws StraitChainException 海峡链异常
+     * @throws NullPointerException 结果null
+     */
+    Nft1155MintDto scs1155NftMint(StraitNftMintParam param) throws StraitChainException,NullPointerException;
 }

@@ -17,13 +17,9 @@ import com.shangchain.straitchain.utils.StraitChainUtil;
 import lombok.Data;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
-import org.web3j.abi.FunctionEncoder;
-import org.web3j.abi.datatypes.Address;
-import org.web3j.abi.datatypes.Bool;
-import org.web3j.abi.datatypes.Function;
-import org.web3j.abi.datatypes.Utf8String;
-import org.web3j.abi.datatypes.generated.Uint256;
-import org.web3j.abi.datatypes.generated.Uint64;
+import org.web3j.abi.*;
+import org.web3j.abi.datatypes.*;
+import org.web3j.abi.datatypes.generated.*;
 import org.web3j.crypto.Credentials;
 import org.web3j.crypto.RawTransaction;
 import org.web3j.crypto.TransactionEncoder;
@@ -33,6 +29,7 @@ import org.web3j.utils.Numeric;
 import java.io.File;
 import java.math.BigDecimal;
 import java.math.BigInteger;
+import java.nio.charset.StandardCharsets;
 import java.util.*;
 
 /**
@@ -45,7 +42,7 @@ import java.util.*;
 public class StraitChainClient implements
         IScsChain, INftContract,
         IDepositCertificateContract, Ipfs,
-        IBusiness
+        IBusiness,INft1155Contract
 {
     Logger log = LoggerFactory.getLogger(this.getClass());
 
@@ -53,6 +50,7 @@ public class StraitChainClient implements
     private String appKey;
     private String url;
     private BigInteger defaultGasLimit = new BigInteger("150000");
+    private BigInteger defaultGasPrice = new BigInteger(new Double(5.63 * Math.pow(10, 11) + 7).longValue()+"");
     /**
      * 初始化的时候要设置
      */
@@ -953,5 +951,137 @@ public class StraitChainClient implements
         String encode = FunctionEncoder.encode(function);
         String address = scsCall(fromAddress,contractAddress, encode);
         return removeExtraZero(address);
+    }
+
+    @Override
+    public Nft1155MintDto scs1155NftMint(StraitNftMintParam param) throws StraitChainException, NullPointerException {
+        List<Object> list =new ArrayList<>();
+        list.add(appId);
+        list.add(param.getNftName());
+        list.add(param.getCid());
+        list.add(param.getNftUri());
+        list.add(param.getCopyRight());
+        list.add(param.getIssuer());
+        list.add(param.getOperator());
+        list.add(param.getRemark());
+        list.add(param.getCount());
+        list.add(param.getOwner());
+        list.add(param.getContractAddress());
+        list.add(param.getCollectSn());
+        list.add(param.getServiceId());
+        String md5 = StraitChainUtil.encryptDataByMd5(list, appKey);
+        list.add(md5);
+        StraitChainParam request = new StraitChainParam();
+        request.setMethod(StraitChainConstant.SCS_1155_NFT_MINT);
+        request.setParams(list);
+        StraitChainResponse response = chainRequest(request);
+        return JSONObject.parseObject(response.getResult().toString(), Nft1155MintDto.class);
+    }
+
+    @Override
+    public String nft1155SafeTransferFrom(Nft1155SafeTransferFromParam param){
+        BigInteger nonce = scsGetTransactionCount(param.getFrom(), DefaultBlockParameterName.LATEST);
+        return nft1155SafeTransferFrom(param,nonce,defaultGasPrice,defaultGasLimit);
+    }
+
+    @Override
+    public String nft1155SafeTransferFrom(Nft1155SafeTransferFromParam param, BigInteger nonce,BigInteger gasPrice,BigInteger gasLimit) {
+
+        Function function = new Function(
+                StraitChainConstant.CONTRACT_1155_SAFE_TRANSFER_FROM,
+                Arrays.asList(
+                        new Address(160, param.getFrom())
+                        ,new Address(160, param.getTo())
+                        ,new Uint256(param.getTokenId())
+                        ,new Uint256(param.getAmount())
+                        ,new DynamicBytes(param.getData().getBytes(StandardCharsets.UTF_8))
+                ),
+                Collections.emptyList());
+        String encode = FunctionEncoder.encode(function);
+        RawTransaction rawTransaction = RawTransaction.createTransaction(nonce, gasPrice, gasLimit, param.getContractAddress(), encode);
+        Credentials credentials = Credentials.create(param.getPrivateKey());
+        byte[] signedMessage = TransactionEncoder.signMessage(rawTransaction, credentials);
+        String txValue = Numeric.toHexString(signedMessage);
+        return scsSendRawTransaction(txValue);
+    }
+
+    @Override
+    public Long nft1155BalanceOf(Nft1155BalanceOfParam param) {
+        Function function = new Function(
+                StraitChainConstant.CONTRACT_1155_BALANCE_OF,
+                Arrays.asList(
+                    new Address(160, param.getAccount())
+                    ,new Uint256(param.getTokenId())
+                ),
+                Collections.emptyList());
+        String encode = FunctionEncoder.encode(function);
+        String result = scsCall(param.getFrom(), param.getContractAddress(), encode);
+        result = result.replace("0x", "");
+        return Long.parseLong(result, 16);
+    }
+
+    @Override
+    public List<Long> nft1155BalanceOfBatch(Nft1155BalanceOfBatchParam param) {
+        List<String> accounts = param.getAccounts();
+        List<Address> addresses = new ArrayList<>(accounts.size());
+        for (String account : accounts) {
+            Address address = new Address(160, account);
+            addresses.add(address);
+        }
+
+        List<Long> tokenIds = param.getTokenIds();
+        List<Uint256> tokenIdes = new ArrayList<>(tokenIds.size());
+        for (Long tokenId : tokenIds) {
+            Uint256 unit = new Uint256(tokenId);
+            tokenIdes.add(unit);
+        }
+
+        Function function = new Function(
+                StraitChainConstant.CONTRACT_1155_BALANCE_OF_BATCH,
+                Arrays.asList(
+                        new DynamicArray<>(Address.class, addresses)
+                        ,new DynamicArray<>(Uint256.class, tokenIdes)
+                ),
+                // output参数
+                Collections.singletonList(new TypeReference<DynamicArray<Uint256>>() {}));
+        String encode = FunctionEncoder.encode(function);
+        String result = scsCall(param.getFrom(), param.getContractAddress(),encode);
+        List<Type> types = FunctionReturnDecoder.decode(result, function.getOutputParameters());
+        // 根据function的output取
+        List<Type> list = (List<Type>)types.get(0).getValue();
+        List<Long> resultAmount = new ArrayList<>();
+        list.forEach((x-> resultAmount.add(((BigInteger)x.getValue()).longValue())));
+        return resultAmount;
+    }
+
+    @Override
+    public Nft1155MintDetailDto nft1155VerificationNft(Nft1155VerificationNftParam param) {
+        Function function = new Function(
+                StraitChainConstant.CONTRACT_1155_VERIFICATION_NFT,
+                Collections.singletonList(
+                        new Uint256(param.getTokenId())
+                ),
+                Arrays.asList(
+                        new TypeReference<Uint256>() {},
+                        new TypeReference<Address>() {},
+                        new TypeReference<Uint256>() {},
+                        new TypeReference<DynamicArray<Utf8String>>(){}
+                )
+        );
+        String encode = FunctionEncoder.encode(function);
+        String result = scsCall(param.getFrom(), param.getContractAddress(), encode);
+        List<Type> decode = DefaultFunctionReturnDecoder.decode(result, function.getOutputParameters());
+        Nft1155MintDetailDto dto = new Nft1155MintDetailDto();
+        dto.setTokenId(((Uint256) decode.get(0)).getValue().longValue());
+        dto.setMintOwner(((Address) decode.get(1)).getValue());
+        dto.setAmount(((Uint256) decode.get(2)).getValue().longValue());
+
+        DynamicArray<Utf8String> dynamicArray = (DynamicArray<Utf8String>) decode.get(3);
+        List<String> data = new ArrayList<>(dynamicArray.getValue().size());
+        for (Utf8String o : dynamicArray.getValue()) {
+            data.add(o.getValue());
+        }
+        dto.setMintData(data);
+        return dto;
     }
 }

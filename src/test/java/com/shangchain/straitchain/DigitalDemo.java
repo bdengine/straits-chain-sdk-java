@@ -12,7 +12,7 @@ import java.util.List;
 
 /**
  * 2022/10/31
- *
+ * 数字藏品
  * @author shangchain Junisyoan
  */
 public class DigitalDemo {

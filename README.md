@@ -1,5 +1,7 @@
 # 海峡链开发者平台Java开发工具包
 
+## 相关示例位于test文件夹下
+
 ## StraitChainClient 客户端使用说明
 
 1. 将com.shangchain.straitchain下的源文件复制粘贴到对应的工程中，方便使用和修改
@@ -18,7 +20,7 @@ public class StraitChainInit {
     }
 }
 ```
-3. 异常捕获，sdk没有对client请求进行全局异常的捕获，需要使用者在使用的时候对异常进行捕获处理
+3. 异常捕获，sdk没有对client请求进行全局异常的捕获，需要使用者在使用的时候对异常进行捕获处理，常用异常：NullPointerException、IORuntimeException、StraitChainException、SocketTimeoutException
 
 ## 代码示例
 ### 铸造nft

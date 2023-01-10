@@ -17,6 +17,10 @@ public enum ContractTypeEnum{
      * 4907合约
      */
     CONTRACT_4907(1),
+    /**
+     * 1155合约
+     */
+    CONTRACT_1155(2),
 
 
     ;

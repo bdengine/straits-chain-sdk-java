@@ -156,4 +156,14 @@ public class StraitChainConstant {
     public static final String CONTRACT_TOKEN_URI = "tokenURI";
     public static final String CONTRACT_TOTAL_SUPPLY = "totalSupply";
     public static final String CONTRACT_GET_OWNER_OF_CONTRACT = "getOwnerOfContract";
+
+    /**
+     * 铸造1155合约NFT
+     */
+    public static final String SCS_1155_NFT_MINT = "scs_1155_nft_mint";
+    public static final String CONTRACT_1155_SAFE_TRANSFER_FROM = "safeTransferFrom";
+    public static final String CONTRACT_1155_BALANCE_OF = "balanceOf";
+    public static final String CONTRACT_1155_BALANCE_OF_BATCH = "balanceOfBatch";
+    public static final String CONTRACT_1155_VERIFICATION_NFT = "verificationNft";
+
 }
