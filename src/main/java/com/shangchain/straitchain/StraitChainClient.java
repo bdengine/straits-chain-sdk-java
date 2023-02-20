@@ -118,7 +118,7 @@ public class StraitChainClient implements
         if (StrUtil.isEmpty(url)) {
             throw new IllegalArgumentException("url不能为空");
         }
-        String chainUri = "/api/develop/straits/action";
+        String chainUri = "/webclient/api/develop/straits/action";
         List<Object> paramList = straitChainParam.getParams();
         for (int i = 0; i < paramList.size(); i++) {
             Object obj = paramList.get(i);

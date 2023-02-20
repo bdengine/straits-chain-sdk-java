@@ -12,7 +12,7 @@ public class IpfsTest {
         StraitChainClient client = new StraitChainClient();
         client.setAppId("Ist8KOqm");
         client.setAppKey("8d065964ab77cfa1917bdafa6c27e5dd605590ed");
-//        client.setUrl("https://backend.straitchain.com/webclient");
+//        client.setUrl("https://backend.straitchain.com");
         client.setUrl("http://192.168.80.15/strait-chain-client-test");
         String from       = "0xc4244f49522c32e6181b759f35be5efa2f19d7f9";
         String to         = "0x171Fa07F54E730364ad843153e896427110F6ea2";

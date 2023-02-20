@@ -38,7 +38,7 @@ public class NftMintTest {
         StraitChainClient client = new StraitChainClient();
         client.setAppId("appId");
         client.setAppKey("appKey");
-        client.setUrl("https://backend.straitchain.com/webclient");
+        client.setUrl("https://backend.straitchain.com");
 //        client.setUrl("http://192.168.80.15/strait-chain-client-test");
         String from       = "赠送nft的通行证地址";
         String to         = "接收nft的通行证地址";

@@ -24,7 +24,7 @@ public class Nft4907Test {
         StraitChainClient client = new StraitChainClient();
         client.setAppId("appId");
         client.setAppKey("appKey");
-        client.setUrl("https://backend.straitchain.com/webclient");
+        client.setUrl("https://backend.straitchain.com");
         String from       = "通行证地址（钱包地址）";
         String to         = "通行证地址（钱包地址）";
         String privateKey = "私钥";

@@ -29,7 +29,7 @@ public class StraitChainInit {
 StraitChainClient client = new StraitChainClient();
 client.setAppId(appId);
 client.setAppKey(appKey);
-client.setUrl("https://backend.straitchain.com/webclient");
+client.setUrl("https://backend.straitchain.com");
 
 ```
 部署合约

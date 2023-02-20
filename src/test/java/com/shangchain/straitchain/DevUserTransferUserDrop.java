@@ -18,7 +18,7 @@ public class DevUserTransferUserDrop {
         StraitChainClient client = new StraitChainClient();
 //        client.setAppId("appId");
 //        client.setAppKey("appKey");
-//        client.setUrl("https://backend.straitchain.com/webclient");
+//        client.setUrl("https://backend.straitchain.com");
 //        String from       = "通行证地址";
 //        String to         = "通行证地址";
 //        String privateKey = "通行证私钥";

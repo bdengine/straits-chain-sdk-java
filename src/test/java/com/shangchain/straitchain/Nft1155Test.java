@@ -29,7 +29,7 @@ public class Nft1155Test {
         StraitChainClient client = new StraitChainClient();
 //        client.setAppId("appId");
 //        client.setAppKey("appKey");
-//        client.setUrl("https://backend.straitchain.com/webclient");
+//        client.setUrl("https://backend.straitchain.com");
         client.setTimeout(30000);
         client.setUrl("http://192.168.80.15/strait-chain-client-test");
         client.setAppId("Ist8KOqm");
