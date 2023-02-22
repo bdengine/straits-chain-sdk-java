@@ -55,17 +55,18 @@ public class StraitChainClient implements
      * 初始化的时候要设置
      */
     private int timeout = 6000;
+    String chainUri = "/api/develop/straits/action";
 
     public StraitChainClient(String appId, String appKey, String url) {
         this.appId = appId;
         this.appKey = appKey;
-        this.url = url;
+        this.url = url+chainUri;
     }
 
     public void refresh(String appId, String appKey, String url){
         this.appId = appId;
         this.appKey = appKey;
-        this.url = url;
+        this.url = url+chainUri;
     }
 
     public void setTimeout(int timeout){
@@ -118,7 +119,6 @@ public class StraitChainClient implements
         if (StrUtil.isEmpty(url)) {
             throw new IllegalArgumentException("url不能为空");
         }
-        String chainUri = "/webclient/api/develop/straits/action";
         List<Object> paramList = straitChainParam.getParams();
         for (int i = 0; i < paramList.size(); i++) {
             Object obj = paramList.get(i);
@@ -126,7 +126,7 @@ public class StraitChainClient implements
                 throw new StraitChainException(straitChainParam.getMethod()+"，第"+i+"个参数为null，参数不允许为null，为空则填写空串\"\"");
             }
         }
-        return commonRequest(JSONObject.toJSONString(straitChainParam, SerializerFeature.DisableCircularReferenceDetect), url + chainUri);
+        return commonRequest(JSONObject.toJSONString(straitChainParam, SerializerFeature.DisableCircularReferenceDetect), url);
     }
 
     @Override
