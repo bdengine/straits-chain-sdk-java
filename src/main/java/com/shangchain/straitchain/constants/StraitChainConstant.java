@@ -60,8 +60,6 @@ public class StraitChainConstant {
      */
     public static final String SCS_GET_TRANSACTION_BY_HASH = "scs_getTransactionByHash";
 
-    public static final String SCS_ACCOUNTS = "scs_accounts";
-
     public static final String SCS_BLOCK_NUMBER = "scs_blockNumber";
     /**
      * 获取gasPrice
@@ -72,10 +70,6 @@ public class StraitChainConstant {
      * 获取回执交易
      */
     public static final String SCS_GET_TRANSACTION_RECEIPT = "scs_getTransactionReceipt";
-    /**
-     * 获取日子
-     */
-    public static final String SCS_GET_LOGS = "scs_getLogs";
 
     /**
      * 铸造NFT
@@ -102,20 +96,6 @@ public class StraitChainConstant {
      */
     public static final String SCS_CALL = "scs_call";
 
-    /**
-     * 查询合约版本
-     */
-    public static final String NET_VERSION = "net_version";
-
-    public static final String SCS_CHAIN_ID = "scs_chainId";
-
-    /**
-     * ipfs方法
-     */
-    public static final String SCS_IPFS_UPLOAD = "scs_ipfs_upload";
-
-    public static final String SCS_NFT_LIST = "scs_nft_list";
-
     public static final String SCS_EXISTING_EVIDENCE = "scs_existing_evidence";
 
     public static final String SCS_GET_EVIDENCE_CONTRACT_ADDRESS = "scs_get_evidence_contract_address";
@@ -135,7 +115,7 @@ public class StraitChainConstant {
 
     public static final String SCS_DIGITAL_COLLECTION_TRANSACTION = "scs_digital_collection_transaction";
 
-    public static final String SCS_PANG_GU_EVIDENCE = "scs_panggu_evidence";
+    public static final String SCS_PAN_GU_EVIDENCE = "scs_pangu_evidence";
 
     /**
      * 4907合约方法

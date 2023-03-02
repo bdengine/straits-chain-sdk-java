@@ -17,9 +17,13 @@ import com.shangchain.straitchain.utils.StraitChainUtil;
 import lombok.Data;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
-import org.web3j.abi.*;
+import org.web3j.abi.DefaultFunctionReturnDecoder;
+import org.web3j.abi.FunctionEncoder;
+import org.web3j.abi.FunctionReturnDecoder;
+import org.web3j.abi.TypeReference;
 import org.web3j.abi.datatypes.*;
-import org.web3j.abi.datatypes.generated.*;
+import org.web3j.abi.datatypes.generated.Uint256;
+import org.web3j.abi.datatypes.generated.Uint64;
 import org.web3j.crypto.Credentials;
 import org.web3j.crypto.RawTransaction;
 import org.web3j.crypto.TransactionEncoder;
@@ -1083,5 +1087,24 @@ public class StraitChainClient implements
         }
         dto.setMintData(data);
         return dto;
+    }
+
+    @Override
+    public String scsPanGuEvidence(PanGuEvidenceParam param) throws StraitChainException, NullPointerException {
+        List<Object> list =new ArrayList<>();
+        list.add(appId);
+        list.add(param.getDataInnerPrimaryKey());
+        list.add(param.getDataInnerPrimaryIssueId());
+        list.add(param.getDataInnerSecondIssueId());
+        list.add(param.getDataDesc());
+        list.add(param.getDataValue());
+        list.add(param.getDataNeedHash());
+        String md5 = StraitChainUtil.encryptDataByMd5(list, appKey);
+        list.add(md5);
+        StraitChainParam request = new StraitChainParam();
+        request.setMethod(StraitChainConstant.SCS_PAN_GU_EVIDENCE);
+        request.setParams(list);
+        StraitChainResponse response = chainRequest(request);
+        return response.getResult().toString();
     }
 }

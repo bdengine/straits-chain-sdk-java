@@ -255,4 +255,11 @@ public interface IScsChain {
      * @throws NullPointerException 结果null
      */
     Nft1155MintDto scs1155NftMint(StraitNftMintParam param) throws StraitChainException,NullPointerException;
+
+    /**
+     * 盘古存证
+     * 1.2.12
+     * @return 交易哈希
+     */
+    String scsPanGuEvidence(PanGuEvidenceParam param) throws StraitChainException,NullPointerException;
 }
