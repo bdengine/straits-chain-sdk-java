@@ -1,31 +1,5 @@
 package com.shangchain.straitchain;
 
-import cn.hutool.core.date.DatePattern;
-import cn.hutool.core.date.LocalDateTimeUtil;
-import cn.hutool.core.util.StrUtil;
-import cn.hutool.http.HttpUtil;
-import com.shangchain.straitchain.constants.StraitChainConstant;
-import com.shangchain.straitchain.dto.NftMintDto;
-import com.shangchain.straitchain.dto.TransactionInfoDto;
-import com.shangchain.straitchain.exception.StraitChainException;
-import com.shangchain.straitchain.params.StraitChainSendRawTxParam;
-import org.web3j.abi.FunctionEncoder;
-import org.web3j.abi.datatypes.Address;
-import org.web3j.abi.datatypes.Function;
-import org.web3j.abi.datatypes.generated.Uint256;
-import org.web3j.crypto.Credentials;
-import org.web3j.crypto.RawTransaction;
-import org.web3j.crypto.TransactionUtils;
-import org.web3j.protocol.core.DefaultBlockParameterName;
-
-import java.io.File;
-import java.math.BigInteger;
-import java.time.Duration;
-import java.time.LocalDateTime;
-import java.util.Arrays;
-import java.util.Collections;
-import java.util.List;
-
 /**
  * 2022/4/26
  * nft铸造，分六个步骤，每一步要分开
@@ -35,14 +9,14 @@ import java.util.List;
 public class NftMintTest {
 
     public static void main(String[] args) {
+
         StraitChainClient client = new StraitChainClient();
         client.setAppId("appId");
         client.setAppKey("appKey");
         client.setUrl("https://backend.straitchain.com");
-//        client.setUrl("http://192.168.80.15/strait-chain-client-test");
-        String from       = "赠送nft的通行证地址";
-        String to         = "接收nft的通行证地址";
-        String privateKey = "from的私钥";
+        String from       = "通行证地址（钱包地址）";
+        String to         = "通行证地址（钱包地址）";
+        String privateKey = "私钥";
 
         // 第一步
 //        int nftMintCount = 10;

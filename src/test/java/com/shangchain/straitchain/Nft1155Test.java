@@ -1,24 +1,5 @@
 package com.shangchain.straitchain;
 
-import com.shangchain.straitchain.dto.Nft1155MintDetailDto;
-import com.shangchain.straitchain.dto.Nft1155MintDto;
-import com.shangchain.straitchain.dto.NftMintDto;
-import com.shangchain.straitchain.dto.TransactionInfoDto;
-import com.shangchain.straitchain.enums.ContractTypeEnum;
-import com.shangchain.straitchain.params.*;
-import org.web3j.abi.DefaultFunctionReturnDecoder;
-import org.web3j.abi.TypeReference;
-import org.web3j.abi.datatypes.DynamicArray;
-import org.web3j.abi.datatypes.DynamicBytes;
-import org.web3j.abi.datatypes.Type;
-import org.web3j.abi.datatypes.Utf8String;
-import org.web3j.abi.datatypes.generated.Uint256;
-
-import java.util.Arrays;
-import java.util.Collections;
-import java.util.List;
-import java.util.stream.Collectors;
-
 /**
  * 2023/1/9
  * 1155合约
@@ -27,16 +8,12 @@ import java.util.stream.Collectors;
 public class Nft1155Test {
     public static void main(String[] args) {
         StraitChainClient client = new StraitChainClient();
-//        client.setAppId("appId");
-//        client.setAppKey("appKey");
-//        client.setUrl("https://backend.straitchain.com");
-        client.setTimeout(30000);
-        client.setUrl("http://192.168.80.15/strait-chain-client-test");
-        client.setAppId("Ist8KOqm");
-        client.setAppKey("8d065964ab77cfa1917bdafa6c27e5dd605590ed");
-        String from       = "0xc4244F49522C32E6181b759f35BE5EfA2f19d7f9";
-        String to         = "0x171Fa07F54E730364ad843153e896427110F6ea2";
-        String privateKey = "09f51b8fd9e4124e1b80e4ffd475a5a542a438177fed9d4f10d626958e16b1da";
+        client.setAppId("appId");
+        client.setAppKey("appKey");
+        client.setUrl("https://backend.straitchain.com");
+        String from       = "通行证地址";
+        String to         = "通行证地址";
+        String privateKey = "privateKey";
 
         // 第一步
 //        int nftMintCount = 10;
