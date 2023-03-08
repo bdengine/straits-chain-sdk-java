@@ -77,6 +77,10 @@ public class StraitChainClient implements
         this.timeout = timeout;
     }
 
+    public void setUrl(String url){
+        this.url = url + "/webclient/api/develop/straits/action";
+    }
+
     public StraitChainClient() {
     }
 
