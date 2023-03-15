@@ -48,29 +48,35 @@ public class StraitChainClient implements
         IDepositCertificateContract, Ipfs,
         IBusiness,INft1155Contract
 {
-    Logger log = LoggerFactory.getLogger(this.getClass());
+    Logger log = LoggerFactory.getLogger(StraitChainClient.class);
 
     private String appId;
     private String appKey;
     private String url;
     private BigInteger defaultGasLimit = new BigInteger("150000");
-    private BigInteger defaultGasPrice = new BigInteger(new Double(5.63 * Math.pow(10, 11) + 7).longValue()+"");
+    private BigInteger defaultGasPrice = new BigInteger("563000000007");
     /**
      * 初始化的时候要设置
      */
     private int timeout = 6000;
     String chainUri = "/api/develop/straits/action";
 
+    public StraitChainClient(String appId, String appKey) {
+        this.appId = appId;
+        this.appKey = appKey;
+        this.url = "https://backend.straitchain.com/webclient/api/develop/straits/action";
+    }
+
     public StraitChainClient(String appId, String appKey, String url) {
         this.appId = appId;
         this.appKey = appKey;
-        this.url = url+chainUri;
+        this.url = url;
     }
 
     public void refresh(String appId, String appKey, String url){
         this.appId = appId;
         this.appKey = appKey;
-        this.url = url+chainUri;
+        this.url = url;
     }
 
     public void setTimeout(int timeout){
@@ -78,7 +84,7 @@ public class StraitChainClient implements
     }
 
     public void setUrl(String url){
-        this.url = url + "/webclient/api/develop/straits/action";
+        this.url = url;
     }
 
     public StraitChainClient() {
@@ -233,10 +239,10 @@ public class StraitChainClient implements
         list.add(scsParam.getGas());
         // gasPrice
         BigInteger integer = scsGasPrice();
-        list.add("0x"+integer.toString(16));
+        list.add(Numeric.toHexStringWithPrefix(integer));
         list.add(scsParam.getValue());
         list.add(scsParam.getContractSignData());
-        list.add("0x"+nonce.toString(16));
+        list.add(Numeric.toHexStringWithPrefix(nonce));
         param.setParams(list);
         StraitChainResponse response = chainRequest(param);
         return response.getResult().toString();
@@ -351,10 +357,10 @@ public class StraitChainClient implements
         list.add(scsParam.getGas());
         // gasPrice
         BigInteger integer = scsGasPrice();
-        list.add("0x"+integer.toString(16));
+        list.add(Numeric.toHexStringWithPrefix(integer));
         list.add(scsParam.getValue());
         list.add(scsParam.getContractSignData());
-        list.add("0x"+nonce.toString(16));
+        list.add(Numeric.toHexStringWithPrefix(nonce));
         param.setParams(list);
         StraitChainResponse response = chainRequest(param);
         return StraitChainUtil.toBigInteger(response.getResult().toString());
@@ -509,7 +515,7 @@ public class StraitChainClient implements
     }
     @Override
     public String scsCall(ScsCallParam scsParam, String blockNumber,BigInteger gasPrice) throws StraitChainException {
-        scsParam.setGasPrice("0x"+gasPrice.toString(16));
+        scsParam.setGasPrice(Numeric.toHexStringWithPrefix(gasPrice));
         List<Object> list =new ArrayList<>();
         list.add(scsParam);
         list.add(blockNumber);
@@ -797,9 +803,7 @@ public class StraitChainClient implements
      * @return 去0后的地址
      */
     private String removeExtraZero(String address){
-        if (address.startsWith("0x")) {
-            address = address.replace("0x", "");
-        }
+        address = Numeric.cleanHexPrefix(address);
         if (StrUtil.isBlank(address)){
             return null;
         }
@@ -826,7 +830,7 @@ public class StraitChainClient implements
         String encode = FunctionEncoder.encode(function);
 
         String result = scsCall(from, contractAddress,encode);
-        result = result.replace("0x", "");
+        result = Numeric.cleanHexPrefix(result);
         return Long.parseLong(result, 16);
     }
 
@@ -879,7 +883,7 @@ public class StraitChainClient implements
                 Collections.emptyList());
         String encode = FunctionEncoder.encode(function);
         String result = scsCall(fromAddress, contractAddress, encode);
-        result = result.replace("0x", "");
+        result = Numeric.cleanHexPrefix(result);
         return Long.parseLong(result,16) == 1;
     }
 
@@ -901,7 +905,7 @@ public class StraitChainClient implements
                 Collections.emptyList());
         String encode = FunctionEncoder.encode(function);
         String result = scsCall(fromAddress,contractAddress, encode);
-        result = result.replace("0x", "");
+        result = Numeric.cleanHexPrefix(result);
         return Long.parseLong(result, 16);
     }
 
@@ -923,9 +927,7 @@ public class StraitChainClient implements
                 Collections.emptyList());
         String encode = FunctionEncoder.encode(function);
         String s = scsCall(fromAddress,contractAddress, encode);
-        if (StrUtil.startWith(s, "0x")){
-            s = s.replace("0x", "");
-        }
+        s = Numeric.cleanHexPrefix(s);
         return Long.parseLong(s,16);
     }
 
@@ -1024,7 +1026,8 @@ public class StraitChainClient implements
                 Collections.emptyList());
         String encode = FunctionEncoder.encode(function);
         String result = scsCall(param.getFrom(), param.getContractAddress(), encode);
-        result = result.replace("0x", "");
+        result = Numeric.cleanHexPrefix(result);
+
         return Long.parseLong(result, 16);
     }
 

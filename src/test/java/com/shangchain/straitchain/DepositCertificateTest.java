@@ -10,10 +10,7 @@ import com.shangchain.straitchain.params.StraitChainExistingEvidenceParam;
  */
 public class DepositCertificateTest {
     public static void main(String[] args) {
-        StraitChainClient client = new StraitChainClient();
-        client.setAppId("appId");
-        client.setAppKey("appKey");
-        client.setUrl("https://backend.straitchain.com");
+        StraitChainClient client = new StraitChainClient("appId","appKey");
         String from       = "通行证地址";
         String to         = "通行证地址";
         String privateKey = "通行证私钥";

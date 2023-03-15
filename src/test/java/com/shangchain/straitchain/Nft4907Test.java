@@ -1,18 +1,5 @@
 package com.shangchain.straitchain;
 
-import cn.hutool.core.date.DatePattern;
-import cn.hutool.core.date.DateUtil;
-import com.shangchain.straitchain.dto.NftMintDto;
-import com.shangchain.straitchain.dto.TransactionInfoDto;
-import com.shangchain.straitchain.enums.ContractTypeEnum;
-import com.shangchain.straitchain.params.StraitNft4907SetUserParam;
-import com.shangchain.straitchain.params.StraitNftMintParam;
-
-import java.util.Calendar;
-import java.util.Date;
-import java.util.GregorianCalendar;
-import java.util.List;
-
 /**
  * 2022/10/19
  * 4907合约
@@ -21,10 +8,7 @@ import java.util.List;
 public class Nft4907Test {
     public static void main(String[] args) {
 
-        StraitChainClient client = new StraitChainClient();
-        client.setAppId("appId");
-        client.setAppKey("appKey");
-        client.setUrl("https://backend.straitchain.com");
+        StraitChainClient client = new StraitChainClient("appId","appKey");
         String from       = "通行证地址（钱包地址）";
         String to         = "通行证地址（钱包地址）";
         String privateKey = "私钥";
