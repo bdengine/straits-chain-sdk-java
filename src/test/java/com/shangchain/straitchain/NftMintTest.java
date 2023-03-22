@@ -1,5 +1,9 @@
 package com.shangchain.straitchain;
 
+import cn.hutool.core.thread.ThreadUtil;
+import com.shangchain.straitchain.exception.StraitChainException;
+import com.shangchain.straitchain.params.StraitNftMintParam;
+
 /**
  * 2022/4/26
  * nft铸造，分六个步骤，每一步要分开
@@ -10,58 +14,62 @@ public class NftMintTest {
 
     public static void main(String[] args) {
 
-        StraitChainClient client = new StraitChainClient("appId","appKey");
-        String from       = "通行证地址（钱包地址）";
+        StraitChainClient client = new StraitChainClient("Ist8KOqm","8d065964ab77cfa1917bdafa6c27e5dd605590ed");
+        String from       = "0xc4244F49522C32E6181b759f35BE5EfA2f19d7f9";
         String to         = "通行证地址（钱包地址）";
-        String privateKey = "私钥";
+        String privateKey = "09f51b8fd9e4124e1b80e4ffd475a5a542a438177fed9d4f10d626958e16b1da";
+        client.setUrl("http://192.168.80.15/strait-chain-client-test/api/develop/straits/action");
 
-//        // deployContract: deployContract
-//        // 第一步
-//        int nftMintCount = 10;
-//        // 部署合约
-//        String contractTxHash = null;
-//        for (int i = 0; i < 5; i++) {
-//            contractTxHash = client.scsDeployContract(from,nftMintCount);
-//            if (contractTxHash != null) {
-//                break;
-//            }else if (i == 4){
-//                throw new StraitChainException("合约部署失败，联系熵链技术人员");
-//            }
-//        }
-//        // 0x019974a1cc5d9b9ad04115753239f25472cd750789ac7bc18c778681e710bc2f
-//        System.out.println(contractTxHash);
+        // deployContract: deployContract
+        // 第一步
+        int nftMintCount = 100000;
+        // 部署合约
+        String contractTxHash = null;
+        for (int i = 0; i < 5; i++) {
+            contractTxHash = client.scsDeployContract(from,nftMintCount);
+            if (contractTxHash != null) {
+                break;
+            }else if (i == 4){
+                throw new StraitChainException("合约部署失败，联系熵链技术人员");
+            }
+        }
+        // 0xd1eb8d2c6d24da81a9feecf0c87cc4ca76b4109e045359cf188a21e0f6636018
+        System.out.println(contractTxHash);
 
-//        // 第二部
-//        // 根据合约哈希查询合约地址，合约部署大概5 - 10秒，这里用睡眠
-//        ThreadUtil.sleep(10000);
-//        String contractAddress;
-//        try {
-//            contractAddress = client.scsContractAddressByHash(contractTxHash);
-//        } catch (StraitChainException | NullPointerException e) {
-//            // goto deployContract
-//            throw new StraitChainException("合约部署失败，返回第一步重新开始");
-//        }
-//        // 0x3357e23df2e1b01a18c455ec6352b95dd9d0a0eb
-//        System.out.println(contractAddress);
+        // 第二部
+        // 根据合约哈希查询合约地址，合约部署大概5 - 10秒，这里用睡眠
+        ThreadUtil.sleep(10000);
+        String contractAddress;
+        try {
+            contractAddress = client.scsContractAddressByHash(contractTxHash);
+        } catch (StraitChainException | NullPointerException e) {
+            // goto deployContract
+            throw new StraitChainException("合约部署失败，返回第一步重新开始");
+        }
+        // 0xf62ac9fd73f15194cfa2cba93004c2749f2bd24c
+        System.out.println(contractAddress);
 
-//        // 第三步
-//        // 开始铸造，100个1分钟左右，一万个30分钟左右
-//        StraitNftMintParam nftMintParam = new StraitNftMintParam();
-//        nftMintParam.setNftName("这是nft名字");
-//        nftMintParam.setCid("这是ipfs上传后的cid，没有可不要，填空字符串");
-//        nftMintParam.setNftUri("nft铸造的图片信息，示例：https://cdnstrait.shang-chain.com/default/test.json");
-//        nftMintParam.setCopyRight("版权方");
-//        nftMintParam.setIssuer("发行方");
-//        nftMintParam.setOperator("运营方");
-//        nftMintParam.setRemark("这是一个备注");
-//        nftMintParam.setCount(nftMintCount);
-//        nftMintParam.setOwner(from);
-//        nftMintParam.setContractAddress(contractAddress);
-//        nftMintParam.setCollectSn("业务需求，全平台唯一。如：公司缩写+藏品名称+uuid，不要写中文");
-//        nftMintParam.setServiceId("对应的服务ID，没有就空字符串");
-//        String nftMintHash = client.scsNftMint(nftMintParam);
-//        // 5e43dee3bad2494c9710f80880cba3d6
-//        System.out.println(nftMintHash);
+        // 第三步
+        // 开始铸造，100个1分钟左右，一万个30分钟左右
+        StraitNftMintParam nftMintParam = new StraitNftMintParam();
+        nftMintParam.setNftName("这是nft名字");
+        nftMintParam.setCid("这是ipfs上传后的cid，没有可不要，填空字符串");
+        nftMintParam.setNftUri("https://cdnstrait.shang-chain.com/default/test.json");
+        nftMintParam.setCopyRight("版权方");
+        nftMintParam.setIssuer("发行方");
+        nftMintParam.setOperator("运营方");
+        nftMintParam.setRemark("这是一个备注");
+        nftMintParam.setCount(nftMintCount);
+        nftMintParam.setOwner(from);
+        nftMintParam.setContractAddress(contractAddress);
+        nftMintParam.setCollectSn("业务需求，全平台唯一。如：公司缩写+藏品名称+uuid，不要写中文");
+        nftMintParam.setServiceId("");
+        String nftMintHash = client.scsNftMint(nftMintParam);
+        // 5e43dee3bad2494c9710f80880cba3d6
+        System.out.println(nftMintHash);
+
+        // 预估一下至少nftMintCount * 6L秒，遇见排队会更久，大数量需要提前一天铸造，或者联系我们监控。
+        ThreadUtil.sleep(nftMintCount * 6L);
 
 //        // 第四步
 //        // 查询铸造状态，铸造中查询会返回null，100个一分钟左右，一万个半小时左右，可以预估一下时间再查询，后面间隔10秒查一下
@@ -96,7 +104,7 @@ public class NftMintTest {
 
 //        // 第五步
 //        // 转移nft，拥有者转移给别人，私钥和地址要对应上才能转移成功。每笔转移之间间隔5秒左右，每笔交易链上会收0.03-0.08的手续费。
-//        // 单人转移会很慢，所以推荐提前铸造，然后转移分发给自己其他的账户，比如200个账户，后续在发售过程中用这200个账号进行转移速度就提升了。
+//        // 显示没钱那就是私钥不对
 //        StraitChainSendRawTxParam param = new StraitChainSendRawTxParam();
 //        param.setFrom(from);
 //        param.setTo(to);
@@ -116,9 +124,10 @@ public class NftMintTest {
 //            System.out.println("失败");
 //        }
 
+        // 查一下拥有者
         String owner = client.nftOwnerOfExcludeZero(
-                "0x228a77cec9424b709ffb2705cae6898ec8a4e888",
-                "0x228a77cec9424b709ffb2705cae6898ec8a4e888",
+                from,
+                contractAddress,
                 512);
         System.out.println(owner);
 
