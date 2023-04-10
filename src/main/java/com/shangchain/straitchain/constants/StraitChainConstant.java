@@ -146,4 +146,13 @@ public class StraitChainConstant {
     public static final String CONTRACT_1155_BALANCE_OF_BATCH = "balanceOfBatch";
     public static final String CONTRACT_1155_VERIFICATION_NFT = "verificationNft";
 
+    /**
+     * 根域名服务
+     */
+    public static final String SCS_REALM_NAME_REGISTER = "scs_realm_name_register";
+    public static final String SCS_REALM_NAME_QUERY = "scs_realm_name_query";
+    /**
+     * 子域名服务
+     */
+    public static final String SCS_REALM_NAME_CONTRACT_ADDR = "scs_realm_name_contract_addr";
 }

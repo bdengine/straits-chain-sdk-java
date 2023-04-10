@@ -259,7 +259,29 @@ public interface IScsChain {
     /**
      * 盘古存证
      * 1.2.12
+     *
      * @return 交易哈希
      */
-    String scsPanGuEvidence(PanGuEvidenceParam param) throws StraitChainException,NullPointerException;
+    String scsPanGuEvidence(PanGuEvidenceParam param) throws StraitChainException, NullPointerException;
+
+    /**
+     * 3.6.30 根域名注册
+     * @param param
+     * @return
+     */
+    String scsRealmNameRegister(ScsRealmNameRegisterParam param) throws StraitChainException, NullPointerException;
+
+    /**
+     * 3.6.31 根域名注册结果查询
+     *
+     * @return
+     */
+    String scsRealmNameQuery(String hash) throws StraitChainException, NullPointerException;
+
+    /**
+     * 3.6.32 返回一级域名注册对应合约地址
+     *
+     * @return
+     */
+    String scsRealmNameContractAddr() throws StraitChainException, NullPointerException;
 }

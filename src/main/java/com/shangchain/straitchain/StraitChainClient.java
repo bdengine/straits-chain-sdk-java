@@ -1114,4 +1114,41 @@ public class StraitChainClient implements
         StraitChainResponse response = chainRequest(request);
         return response.getResult().toString();
     }
+
+    @Override
+    public String scsRealmNameRegister(ScsRealmNameRegisterParam param) throws StraitChainException, NullPointerException {
+        List<Object> list =new ArrayList<>();
+        list.add(appId);
+        list.add(param.getRealmName());
+        list.add(param.getOwnerAddress());
+        String md5 = StraitChainUtil.encryptDataByMd5(list, appKey);
+        list.add(md5);
+        StraitChainParam request = new StraitChainParam();
+        request.setMethod(StraitChainConstant.SCS_REALM_NAME_REGISTER);
+        request.setParams(list);
+        StraitChainResponse response = chainRequest(request);
+        return response.getResult().toString();
+    }
+
+    @Override
+    public String scsRealmNameQuery(String hash) throws StraitChainException, NullPointerException {
+        List<Object> list =new ArrayList<>();
+        list.add(appId);
+        list.add(hash);
+        String md5 = StraitChainUtil.encryptDataByMd5(list, appKey);
+        list.add(md5);
+        StraitChainParam request = new StraitChainParam();
+        request.setMethod(StraitChainConstant.SCS_REALM_NAME_QUERY);
+        request.setParams(list);
+        StraitChainResponse response = chainRequest(request);
+        return response.getResult().toString();
+    }
+
+    @Override
+    public String scsRealmNameContractAddr() throws StraitChainException, NullPointerException {
+        StraitChainParam request = new StraitChainParam();
+        request.setMethod(StraitChainConstant.SCS_REALM_NAME_CONTRACT_ADDR);
+        StraitChainResponse response = chainRequest(request);
+        return response.getResult().toString();
+    }
 }
