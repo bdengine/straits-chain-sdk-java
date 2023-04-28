@@ -193,7 +193,7 @@ public class StraitsRealmClient {
     }
 
     /**
-     * 注册或者转移一级域名（同步）
+     * 注册子域名（同步）
      * @param ownerPrivateKey 当前域名所属者
      * @param toUserAddress 转移到该地址下
      * @param rootName 根域名
@@ -210,7 +210,7 @@ public class StraitsRealmClient {
     }
 
     /**
-     * 注册或者转移一级域名（异步）
+     * 注册子域名（异步）
      * @param ownerPrivateKey 当前域名所属者
      * @param toUserAddress 转移到该地址下
      * @param rootName 根域名
@@ -225,6 +225,40 @@ public class StraitsRealmClient {
        /* transactionReceiptCompletableFuture.thenAccept((result)->{
             System.out.println("返回的交易结果result:"+result.isStatusOK()+"================"+result.getTransactionHash());
         });*/
+        return transactionReceiptCompletableFuture;
+    }
+
+    /**
+     * 子域名用户之间转移（同步）
+     * @param ownerPrivateKey
+     * @param toUserAddress
+     * @param oneLevelName
+     * @param contractAddress
+     * @return
+     * @throws Exception
+     */
+    public static TransactionReceipt transform(String ownerPrivateKey,String toUserAddress,String oneLevelName,String contractAddress) throws Exception{
+        //初始化web3j对象
+        SNSRegister register = createRegister(ownerPrivateKey,contractAddress);
+        RemoteFunctionCall<TransactionReceipt> call = register.setOwner(SNSUtil.hashEns(oneLevelName), toUserAddress);
+        TransactionReceipt receipt = call.send();
+        return receipt;
+    }
+
+    /**
+     * 子域名用户之间转移（异步）
+     * @param ownerPrivateKey
+     * @param toUserAddress
+     * @param oneLevelName
+     * @param contractAddress
+     * @return
+     * @throws Exception
+     */
+    public static CompletableFuture<TransactionReceipt> transformAsync(String ownerPrivateKey,String toUserAddress,String oneLevelName,String contractAddress) throws Exception{
+        //初始化web3j对象
+        SNSRegister register = createRegister(ownerPrivateKey,contractAddress);
+        RemoteFunctionCall<TransactionReceipt> call = register.setOwner(SNSUtil.hashEns(oneLevelName), toUserAddress);
+        CompletableFuture<TransactionReceipt> transactionReceiptCompletableFuture = call.sendAsync();
         return transactionReceiptCompletableFuture;
     }
 }
