@@ -23,7 +23,12 @@ public class StraitsRealmClient {
     static BigInteger gasLimit = BigInteger.valueOf(100000);
     static BigInteger gasPrice = BigInteger.valueOf(Double.valueOf(564e9).longValue());
     static Long chainId_prod = 20220331L;
+//    static Long chainId_prod = 80001L;
 
+    public StraitsRealmClient(String url, Long chainProd) {
+        web3Node_prod = url;
+        chainId_prod = chainProd;
+    }
     /**
      * 构建解析器
      * @param ownerPrivateKey
@@ -51,8 +56,8 @@ public class StraitsRealmClient {
      * @return
      * @throws Exception
      */
-    private static SNSRegister createRegister(String ownerPrivateKey,String contractAddress){
-        Service service = new HttpService(web3Node_prod);
+    private static SNSRegister createRegister(String ownerPrivateKey,String contractAddress,String newUrl){
+        Service service = new HttpService(newUrl==null?web3Node_prod:newUrl);
         Web3j web3j = Web3j.build(service);
         Credentials credentials = Credentials.create(ownerPrivateKey);
         TransactionManager transactionManager = new RawTransactionManager(web3j, credentials, chainId_prod);
@@ -72,8 +77,8 @@ public class StraitsRealmClient {
      * @return
      * @throws Exception
      */
-    public static String getRealmAttribute(String rootName,String oneLevelName,String ownerPrivateKey,String contractAddress,String key) throws Exception{
-        byte[] node = SNSUtil.hashEns(rootName + "." + oneLevelName);
+    public String getRealmAttribute(String rootName,String oneLevelName,String ownerPrivateKey,String contractAddress,String key) throws Exception{
+        byte[] node = SNSUtil.hashEns(oneLevelName + "." + rootName);
         SNSResolver resolver = createResolver(ownerPrivateKey,contractAddress,node);
         String value = resolver.text(node, key).send();
         return value;
@@ -92,8 +97,8 @@ public class StraitsRealmClient {
      * @return
      * @throws Exception
      */
-    public static TransactionReceipt setRealmAttribute(String rootName,String oneLevelName,String ownerPrivateKey,String contractAddress,String key,String value)throws Exception{
-        byte[] node = SNSUtil.hashEns(rootName + "." + oneLevelName);
+    public TransactionReceipt setRealmAttribute(String rootName,String oneLevelName,String ownerPrivateKey,String contractAddress,String key,String value)throws Exception{
+        byte[] node = SNSUtil.hashEns(oneLevelName + "." + rootName);
         SNSResolver resolver = createResolver(ownerPrivateKey,contractAddress,node);
         RemoteFunctionCall<TransactionReceipt> call = resolver.setText(node, key, value);
         TransactionReceipt receipt = call.send();
@@ -110,8 +115,8 @@ public class StraitsRealmClient {
      * @return
      * @throws Exception
      */
-    public static  CompletableFuture<TransactionReceipt> setRealmAttributeAsync(String rootName,String oneLevelName,String ownerPrivateKey,String contractAddress,String key,String value)throws Exception{
-        byte[] node = SNSUtil.hashEns(rootName + "." + oneLevelName);
+    public  CompletableFuture<TransactionReceipt> setRealmAttributeAsync(String rootName,String oneLevelName,String ownerPrivateKey,String contractAddress,String key,String value)throws Exception{
+        byte[] node = SNSUtil.hashEns( oneLevelName + "." + rootName);
         SNSResolver resolver = createResolver(ownerPrivateKey,contractAddress,node);
         RemoteFunctionCall<TransactionReceipt> call = resolver.setText(node, key, value);
         CompletableFuture<TransactionReceipt> receipt = call.sendAsync();
@@ -129,8 +134,8 @@ public class StraitsRealmClient {
      * @return
      * @throws Exception
      */
-    public static String getRealmResolveAddress(String rootName,String oneLevelName,String ownerPrivateKey,String contractAddress) throws Exception {
-        byte[] node = SNSUtil.hashEns(rootName + "." + oneLevelName);
+    public String getRealmResolveAddress(String rootName,String oneLevelName,String ownerPrivateKey,String contractAddress) throws Exception {
+        byte[] node = SNSUtil.hashEns(oneLevelName+ "." + rootName);
         SNSResolver resolver = createResolver(ownerPrivateKey,contractAddress,node);
         String addr = resolver.addr(node).send();
         //如果是0地址, 那么默认解析地址为owner
@@ -151,8 +156,8 @@ public class StraitsRealmClient {
      * @return
      * @throws Exception
      */
-    public static TransactionReceipt setRealmResolveAddress(String rootName,String oneLevelName,String ownerPrivateKey,String contractAddress,String resolveAddress) throws Exception {
-        byte[] node = SNSUtil.hashEns(rootName + "." + oneLevelName);
+    public TransactionReceipt setRealmResolveAddress(String rootName,String oneLevelName,String ownerPrivateKey,String contractAddress,String resolveAddress) throws Exception {
+        byte[] node = SNSUtil.hashEns(oneLevelName + "." + rootName);
         SNSResolver resolver = createResolver(ownerPrivateKey,contractAddress,node);
         RemoteFunctionCall<TransactionReceipt> call = resolver.setAddr(node, resolveAddress);
         //同步发送交易
@@ -170,8 +175,8 @@ public class StraitsRealmClient {
      * @return
      * @throws Exception
      */
-    public static CompletableFuture<TransactionReceipt> setRealmResolveAddressAsync(String rootName,String oneLevelName,String ownerPrivateKey,String contractAddress,String resolveAddress) throws Exception {
-        byte[] node = SNSUtil.hashEns(rootName + "." + oneLevelName);
+    public CompletableFuture<TransactionReceipt> setRealmResolveAddressAsync(String rootName,String oneLevelName,String ownerPrivateKey,String contractAddress,String resolveAddress) throws Exception {
+        byte[] node = SNSUtil.hashEns( oneLevelName + "." + rootName);
         SNSResolver resolver = createResolver(ownerPrivateKey,contractAddress,node);
         RemoteFunctionCall<TransactionReceipt> call = resolver.setAddr(node, resolveAddress);
         //同步发送交易
@@ -185,9 +190,9 @@ public class StraitsRealmClient {
      * @param oneLevelName 一级域名名称
      * @return
      */
-    public static String ownerOf(String rootName,String oneLevelName,String ownerPrivateKey,String contractAddress) throws Exception{
-        byte[] node = SNSUtil.hashEns(rootName + "." + oneLevelName);
-        SNSRegister register = createRegister(ownerPrivateKey,contractAddress);
+    public String ownerOf(String rootName,String oneLevelName,String ownerPrivateKey,String contractAddress) throws Exception{
+        byte[] node = SNSUtil.hashEns(oneLevelName + "." + rootName);
+        SNSRegister register = createRegister(ownerPrivateKey,contractAddress,null);
         String owner = register.owner(node).send();
         return owner;
     }
@@ -201,10 +206,10 @@ public class StraitsRealmClient {
      * @param contractAddress 合约地址
      * @throws Exception
      */
-    public static TransactionReceipt registerOrTransform(String ownerPrivateKey,String toUserAddress,String rootName,String oneLevelName,String contractAddress) throws Exception{
+    public TransactionReceipt registerOrTransform(String ownerPrivateKey,String toUserAddress,String rootName,String oneLevelName,String contractAddress) throws Exception{
         //初始化web3j对象
-        SNSRegister register = createRegister(ownerPrivateKey,contractAddress);
-        RemoteFunctionCall<TransactionReceipt> call = register.setSubnodeOwner(SNSUtil.hashEns(rootName), SNSUtil.hashEns(oneLevelName), toUserAddress);
+        SNSRegister register = createRegister(ownerPrivateKey,contractAddress,web3Node_prod+"&rootName="+rootName+"&oneLevelName="+oneLevelName);
+        RemoteFunctionCall<TransactionReceipt> call = register.setSubnodeOwner(SNSUtil.hashEns(rootName), SNSUtil.hashLabel(oneLevelName), toUserAddress);
         TransactionReceipt receipt = call.send();
         return receipt;
     }
@@ -218,9 +223,9 @@ public class StraitsRealmClient {
      * @param contractAddress 合约地址
      * @throws Exception
      */
-    public static CompletableFuture<TransactionReceipt> registerOrTransformAsync(String ownerPrivateKey,String toUserAddress,String rootName,String oneLevelName,String contractAddress) throws Exception{
-        SNSRegister register = createRegister(ownerPrivateKey,contractAddress);
-        RemoteFunctionCall<TransactionReceipt> call = register.setSubnodeOwner(SNSUtil.hashEns(rootName), SNSUtil.hashEns(oneLevelName), toUserAddress);
+    public CompletableFuture<TransactionReceipt> registerOrTransformAsync(String ownerPrivateKey,String toUserAddress,String rootName,String oneLevelName,String contractAddress) throws Exception{
+        SNSRegister register = createRegister(ownerPrivateKey,contractAddress,web3Node_prod+"&rootName="+rootName+"&oneLevelName="+oneLevelName);
+        RemoteFunctionCall<TransactionReceipt> call = register.setSubnodeOwner(SNSUtil.hashEns(rootName), SNSUtil.hashLabel(oneLevelName), toUserAddress);
         CompletableFuture<TransactionReceipt> transactionReceiptCompletableFuture = call.sendAsync();
        /* transactionReceiptCompletableFuture.thenAccept((result)->{
             System.out.println("返回的交易结果result:"+result.isStatusOK()+"================"+result.getTransactionHash());
@@ -237,10 +242,10 @@ public class StraitsRealmClient {
      * @return
      * @throws Exception
      */
-    public static TransactionReceipt transform(String ownerPrivateKey,String toUserAddress,String oneLevelName,String contractAddress) throws Exception{
+    public TransactionReceipt transform(String ownerPrivateKey,String toUserAddress,String rootName,String oneLevelName,String contractAddress) throws Exception{
         //初始化web3j对象
-        SNSRegister register = createRegister(ownerPrivateKey,contractAddress);
-        RemoteFunctionCall<TransactionReceipt> call = register.setOwner(SNSUtil.hashEns(oneLevelName), toUserAddress);
+        SNSRegister register = createRegister(ownerPrivateKey,contractAddress,null);
+        RemoteFunctionCall<TransactionReceipt> call = register.setOwner(SNSUtil.hashEns(oneLevelName+ "." + rootName), toUserAddress);
         TransactionReceipt receipt = call.send();
         return receipt;
     }
@@ -254,11 +259,22 @@ public class StraitsRealmClient {
      * @return
      * @throws Exception
      */
-    public static CompletableFuture<TransactionReceipt> transformAsync(String ownerPrivateKey,String toUserAddress,String oneLevelName,String contractAddress) throws Exception{
+    public CompletableFuture<TransactionReceipt> transformAsync(String ownerPrivateKey,String toUserAddress,String rootName,String oneLevelName,String contractAddress) throws Exception{
         //初始化web3j对象
-        SNSRegister register = createRegister(ownerPrivateKey,contractAddress);
-        RemoteFunctionCall<TransactionReceipt> call = register.setOwner(SNSUtil.hashEns(oneLevelName), toUserAddress);
+        SNSRegister register = createRegister(ownerPrivateKey,contractAddress,null);
+        RemoteFunctionCall<TransactionReceipt> call = register.setOwner(SNSUtil.hashEns(oneLevelName+ "." + rootName), toUserAddress);
         CompletableFuture<TransactionReceipt> transactionReceiptCompletableFuture = call.sendAsync();
         return transactionReceiptCompletableFuture;
+    }
+
+    public static void main(String[] args) throws Exception {
+        StraitsRealmClient straitsRealmClient = new StraitsRealmClient("http://192.168.80.15/strait-chain-client-test/api/develop/action?chainCode=ScOcc03001", 80001L);
+
+//        TransactionReceipt receipt = registerOrTransform("0xd05c6f7658fc9f0d043c33021f53cf479b5a71052b226f60cc1576a4979c0498", "0x580DDF56De8780cab27412C92f88DfF0fC811898", "meta13", "12345", "0x399216284A57078A0970417e0a9f873d8647837A");
+//        System.out.println(receipt.getTransactionHash()+"================"+receipt.isStatusOK());
+       /* TransactionReceipt meta1 = transform("0x78e1259584d44928bd2868d9f4ed5763f66e79a2f99fb894aa307216a3e93eee", "0x29be7019e6A97a96AEa32F205854D8Bd984742DB", "meta13", "12345", "0x399216284A57078A0970417e0a9f873d8647837A");
+        System.out.println(meta1.getTransactionHash()+"================"+meta1.isStatusOK());*/
+        String s = straitsRealmClient.ownerOf("meta13", "12345", "0xd05c6f7658fc9f0d043c33021f53cf479b5a71052b226f60cc1576a4979c0498", "0x399216284A57078A0970417e0a9f873d8647837A");
+        System.out.println(s);
     }
 }

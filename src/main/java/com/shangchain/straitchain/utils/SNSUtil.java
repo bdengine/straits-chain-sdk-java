@@ -3,6 +3,8 @@ package com.shangchain.straitchain.utils;
 import org.web3j.crypto.Hash;
 import org.web3j.utils.Numeric;
 
+import java.nio.charset.StandardCharsets;
+
 /**
  * <p> </p>
  *
@@ -35,6 +37,11 @@ public class SNSUtil {
         }
         return r;
     }
+
+    public static byte[] hashLabel(String label) {
+        return Hash.sha3(DomainValidatorUtil.normalise(label).getBytes(StandardCharsets.UTF_8));
+    }
+
 
     public static boolean validRootEns(String rootName) {
         if (rootName == null || rootName.isEmpty()) {

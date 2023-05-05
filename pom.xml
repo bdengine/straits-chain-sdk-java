@@ -6,7 +6,7 @@
 
     <groupId>com.straitchain</groupId>
     <artifactId>shangchain-strait-chain-sdk</artifactId>
-    <version>1.2.16</version>
+    <version>1.2.18</version>
     <name>${project.groupId}:${project.artifactId}</name>
     <description>strait chain for java development</description>
     <url>https://github.com/bdengine/straits-chain-sdk-java</url>
@@ -135,6 +135,11 @@
             <groupId>com.alibaba</groupId>
             <artifactId>fastjson</artifactId>
             <version>${fastjson}</version>
+        </dependency>
+        <dependency>
+            <groupId>com.squareup.okhttp3</groupId>
+            <artifactId>okhttp</artifactId>
+            <version>4.3.1</version>
         </dependency>
     </dependencies>
 
