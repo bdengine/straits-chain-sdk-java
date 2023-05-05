@@ -1,9 +1,17 @@
 package com.shangchain.straitchain.utils;
 
 import org.web3j.crypto.Hash;
+import org.web3j.crypto.RawTransaction;
+import org.web3j.crypto.Sign;
+import org.web3j.crypto.TransactionEncoder;
+import org.web3j.rlp.RlpEncoder;
+import org.web3j.rlp.RlpList;
+import org.web3j.rlp.RlpType;
 import org.web3j.utils.Numeric;
 
 import java.nio.charset.StandardCharsets;
+import java.util.Arrays;
+import java.util.List;
 
 /**
  * <p> </p>
@@ -12,57 +20,46 @@ import java.nio.charset.StandardCharsets;
  * @since 2023/4/7 13:49
  */
 public class SNSUtil {
-    static String ZERO_ADDRESS = "0x0000000000000000000000000000000000000000";
+    public static final String ZERO_ADDRESS = "0x0000000000000000000000000000000000000000";
+    public static final byte[] EMPTY = new byte[32];
 
     public static boolean isZeroAddress(String address) {
         return address.equals(ZERO_ADDRESS);
     }
 
     public static byte[] hashEns(String ens) {
-        ens = ens.replaceAll("@", ".");
+        ens = DomainValidatorUtil.validateAndEncode(ens);
 
         return hashEns(ens.split("\\."));
     }
 
-    public static byte[] hashEns(String[] ens) {
-        byte[] r = new byte[]{};
-        for (int i = 0; i < ens.length; i++) {
-            if (r.length == 0) {
-                r = Hash.sha3(Numeric.hexStringToByteArray(ens[i]));
-            } else {
-
-                r = Hash.sha3(mergeByteArrays(r, Hash.sha3(Numeric.hexStringToByteArray(ens[i]))));
-            }
-
-        }
-        return r;
-    }
 
     public static byte[] hashLabel(String label) {
         return Hash.sha3(DomainValidatorUtil.normalise(label).getBytes(StandardCharsets.UTF_8));
     }
 
 
-    public static boolean validRootEns(String rootName) {
-        if (rootName == null || rootName.isEmpty()) {
-            return false;
-        }
-        if (rootName.contains("\\.") || rootName.contains("@")) {
-            return false;
-        }
-        return true;
+    public static byte[] hashEns(String[] ens) {
+        return nameHash(ens);
     }
 
-    public static boolean validL1Ens(String l1Name) {
-        if (l1Name == null || l1Name.isEmpty()) {
-            return false;
+    private static byte[] nameHash(String[] labels) {
+        if (labels.length != 0 && !labels[0].equals("")) {
+            String[] tail;
+            if (labels.length == 1) {
+                tail = new String[0];
+            } else {
+                tail = (String[]) Arrays.copyOfRange(labels, 1, labels.length);
+            }
+
+            byte[] remainderHash = nameHash(tail);
+            byte[] result = Arrays.copyOf(remainderHash, 64);
+            byte[] labelHash = Hash.sha3(labels[0].getBytes(StandardCharsets.UTF_8));
+            System.arraycopy(labelHash, 0, result, 32, labelHash.length);
+            return Hash.sha3(result);
+        } else {
+            return EMPTY;
         }
-        int l1 = l1Name.split("@").length;
-        int l2 = l1Name.split(".").length;
-        if (l1 + l2 == 3) {
-            return true;
-        }
-        return false;
     }
 
     public static byte[] mergeByteArrays(byte[] a, byte[] b) {
@@ -71,6 +68,13 @@ public class SNSUtil {
         System.arraycopy(a, 0, result, 0, a.length);
         System.arraycopy(b, 0, result, a.length, b.length);
         return result;
+    }
+
+
+    public static byte[] encode(RawTransaction rawTransaction, Sign.SignatureData signatureData) {
+        List<RlpType> values = TransactionEncoder.asRlpValues(rawTransaction, signatureData);
+        RlpList rlpList = new RlpList(values);
+        return RlpEncoder.encode(rlpList);
     }
 
 }

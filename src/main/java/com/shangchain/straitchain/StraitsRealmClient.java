@@ -271,12 +271,13 @@ public class StraitsRealmClient {
     }
 
     public static void main(String[] args) throws Exception {
-        StraitsRealmClient straitsRealmClient = new StraitsRealmClient();
-//        TransactionReceipt receipt = registerOrTransform("0xd05c6f7658fc9f0d043c33021f53cf479b5a71052b226f60cc1576a4979c0498", "0x580DDF56De8780cab27412C92f88DfF0fC811898", "meta13", "12345", "0x399216284A57078A0970417e0a9f873d8647837A");
-//        System.out.println(receipt.getTransactionHash()+"================"+receipt.isStatusOK());
+        StraitsRealmClient straitsRealmClient = new StraitsRealmClient("http://192.168.80.15/strait-chain-client-test/api/develop/action?chainCode=ScOcc03001", 80001L);
+        TransactionReceipt receipt = straitsRealmClient.registerOrTransform("4bd25f3bf7da6e9e5eb280d3abeaca20698938281f5195090faf32988ae36417", "0x1c715d4f5ab8ef8e4fb3943dd5d1cd86bc378875", "csss", "1234567", "0x399216284A57078A0970417e0a9f873d8647837A");
+        System.out.println(receipt.getTransactionHash()+"================"+receipt.isStatusOK());
        /* TransactionReceipt meta1 = transform("0x78e1259584d44928bd2868d9f4ed5763f66e79a2f99fb894aa307216a3e93eee", "0x29be7019e6A97a96AEa32F205854D8Bd984742DB", "meta13", "12345", "0x399216284A57078A0970417e0a9f873d8647837A");
         System.out.println(meta1.getTransactionHash()+"================"+meta1.isStatusOK());*/
-        String s = straitsRealmClient.ownerOf("meta13", "12345", "0xd05c6f7658fc9f0d043c33021f53cf479b5a71052b226f60cc1576a4979c0498", "0x399216284A57078A0970417e0a9f873d8647837A");
-        System.out.println(s);
+//        TransactionReceipt s = straitsRealmClient.registerOrTransform("0xAD284E223F379e2D43ddBde70dA45EcaE7769388", "0xad284e223f379e2d43ddbde70da45ecae7769388", "csss", "cssssz", "0x399216284A57078A0970417e0a9f873d8647837A");
+//        straitsRealmClient.registerOrTransform();
+//        System.out.println(s);
     }
 }
