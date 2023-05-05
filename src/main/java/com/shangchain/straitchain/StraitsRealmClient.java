@@ -23,8 +23,11 @@ public class StraitsRealmClient {
     static BigInteger gasLimit = BigInteger.valueOf(100000);
     static BigInteger gasPrice = BigInteger.valueOf(Double.valueOf(564e9).longValue());
     static Long chainId_prod = 20220331L;
-//    static Long chainId_prod = 80001L;
 
+    //    static Long chainId_prod = 80001L;
+    public StraitsRealmClient() {
+
+    }
     public StraitsRealmClient(String url, Long chainProd) {
         web3Node_prod = url;
         chainId_prod = chainProd;
@@ -268,8 +271,7 @@ public class StraitsRealmClient {
     }
 
     public static void main(String[] args) throws Exception {
-        StraitsRealmClient straitsRealmClient = new StraitsRealmClient("http://192.168.80.15/strait-chain-client-test/api/develop/action?chainCode=ScOcc03001", 80001L);
-
+        StraitsRealmClient straitsRealmClient = new StraitsRealmClient();
 //        TransactionReceipt receipt = registerOrTransform("0xd05c6f7658fc9f0d043c33021f53cf479b5a71052b226f60cc1576a4979c0498", "0x580DDF56De8780cab27412C92f88DfF0fC811898", "meta13", "12345", "0x399216284A57078A0970417e0a9f873d8647837A");
 //        System.out.println(receipt.getTransactionHash()+"================"+receipt.isStatusOK());
        /* TransactionReceipt meta1 = transform("0x78e1259584d44928bd2868d9f4ed5763f66e79a2f99fb894aa307216a3e93eee", "0x29be7019e6A97a96AEa32F205854D8Bd984742DB", "meta13", "12345", "0x399216284A57078A0970417e0a9f873d8647837A");
